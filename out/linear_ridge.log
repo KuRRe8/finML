@@ -1,0 +1,3 @@
+2024-08-26 15:34:01,674 - INFO - Started.
+2024-08-26 15:54:27,368 - INFO - Best alpha: {'estimator__alpha': 0.1, 'estimator__fit_intercept': True, 'estimator__positive': False, 'imputer__strategy': 'mean'}
+2024-08-26 15:54:27,369 - INFO - Best cross-validated RMSE: 343.54034515946387
