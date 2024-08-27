@@ -162,7 +162,7 @@ logger.info(f"Best cross-validated RMSE: {sqrt(-grid_search.best_score_)}")
 best_model = grid_search.best_estimator_
 y_pred = best_model.predict(X_test)
 
-r2 = r2_score(y_test, y_pred).round(4)
+r2 = r2_score(y_test, y_pred)
 logger.info(f"R2 score on test set: {r2}")
 
 

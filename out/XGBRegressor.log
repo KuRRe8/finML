@@ -1,0 +1,11 @@
+2024-08-27 02:21:47,423 - INFO - Started.
+2024-08-27 02:24:31,616 - INFO - Best params: {'estimator__device': 'gpu', 'estimator__n_estimators': 200, 'imputer__strategy': 'most_frequent'}
+2024-08-27 02:26:15,041 - INFO - Started.
+2024-08-27 02:28:20,848 - INFO - Best params: {'estimator__device': 'gpu', 'estimator__n_estimators': 200, 'imputer__strategy': 'most_frequent'}
+2024-08-27 02:28:21,208 - INFO - R2 score on test set: 0.9498909856409994
+2024-08-27 02:28:21,208 - INFO - RMSE on test set: 138.00714661271277
+2024-08-27 02:30:40,390 - INFO - Started.
+2024-08-27 02:32:43,301 - INFO - Best params: {'estimator__device': 'gpu', 'estimator__n_estimators': 200, 'imputer__strategy': 'most_frequent'}
+2024-08-27 02:32:43,303 - INFO - Best cross-validated R2: 0.9044107035667585
+2024-08-27 02:32:43,700 - INFO - R2 score on test set: 0.9498909856409994
+2024-08-27 02:32:43,700 - INFO - RMSE on test set: 138.00714661271277

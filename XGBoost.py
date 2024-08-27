@@ -159,12 +159,12 @@ grid_search = GridSearchCV(the_pipe, param_grid, cv=kf, n_jobs=-2, verbose=2, sc
 grid_search.fit(X_train, y_train)
 
 logger.info(f"Best params: {grid_search.best_params_}")
-logger.info(f"Best cross-validated R²: {grid_search.best_score_}")
+logger.info(f"Best cross-validated R2: {grid_search.best_score_}")
 
 best_model = grid_search.best_estimator_
 y_pred = best_model.predict(X_test)
 
-r2 = r2_score(y_test, y_pred).round(4)
+r2 = r2_score(y_test, y_pred)
 rmse = sqrt(mean_squared_error(y_test, y_pred))
 logger.info(f"R2 score on test set: {r2}")
 logger.info(f"RMSE on test set: {rmse}")
