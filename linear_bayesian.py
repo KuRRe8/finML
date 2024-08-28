@@ -145,12 +145,12 @@ kf = KFold(n_splits=5, shuffle=True, random_state=42)
 
 
 param_grid = {
-    'imputer__strategy': ['mean', 'median', 'most_frequent'],
-    'estimator__alpha_1': [1e-6, 1e-5, 1e-4, 1e-3],
-    'estimator__alpha_2': [1e-6, 1e-5, 1e-4, 1e-3],
-    'estimator__lambda_1': [1e-6, 1e-5, 1e-4, 1e-3],
-    'estimator__lambda_2': [1e-6, 1e-5, 1e-4, 1e-3],
-    'estimator__fit_intercept': [True, False],
+    'imputer__strategy': ['mean', 'median'],
+    'estimator__alpha_1': [1e-6, 1e-5],
+    'estimator__alpha_2': [1e-6],
+    'estimator__lambda_1': [1e-6, 1e-5],
+    'estimator__lambda_2': [1e-6],
+    'estimator__fit_intercept': [True],
 
 }
 

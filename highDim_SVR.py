@@ -146,10 +146,10 @@ kf = KFold(n_splits=5, shuffle=True, random_state=42)
 
 
 param_grid = {
-    'imputer__strategy': ['mean', 'median', 'most_frequent'],
+    'imputer__strategy': ['mean'],
     'estimator__kernel': ['linear', 'poly', 'rbf', 'sigmoid'],
-    'estimator__C': [0.5, 1, 2, 3],
-    'estimator__epsilon': [0.1, 0.2, 0.3, 0.4, 0.5],
+    'estimator__C': [0.5, 1, 2],
+    'estimator__epsilon': [0.1, 0.2],
 }
 
 

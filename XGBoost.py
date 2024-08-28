@@ -147,8 +147,8 @@ kf = KFold(n_splits=5, shuffle=True, random_state=42)
 
 
 param_grid = {
-    'imputer__strategy': ['mean', 'median', 'most_frequent'],
-    'estimator__n_estimators': [50, 100, 200],
+    'imputer__strategy': ['mean'],
+    'estimator__n_estimators': [50, 100],
     'estimator__device': ['gpu'],
 
 }
