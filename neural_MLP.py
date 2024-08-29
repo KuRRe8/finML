@@ -147,11 +147,11 @@ kf = KFold(n_splits=5, shuffle=True, random_state=42)
 
 
 param_grid = {
-    'imputer__strategy': ['mean', 'median', 'most_frequent'],
-    'estimator__activation': ['identity', 'logistic', 'tanh', 'relu'],
-    'estimator__solver': ['lbfgs', 'sgd', 'adam'],
+    'imputer__strategy': ['mean', 'median'],
+    'estimator__activation': ['tanh', 'relu'],
+    'estimator__solver': ['sgd', 'adam'],
     'estimator__alpha': [0.0001, 0.001, 0.01],
-    'estimator__learning_rate': ['constant', 'invscaling', 'adaptive'],
+    'estimator__learning_rate': ['adaptive'],
     'estimator__verbose': [True]
 
 }
