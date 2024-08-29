@@ -9,3 +9,12 @@
 2024-08-27 02:32:43,303 - INFO - Best cross-validated R2: 0.9044107035667585
 2024-08-27 02:32:43,700 - INFO - R2 score on test set: 0.9498909856409994
 2024-08-27 02:32:43,700 - INFO - RMSE on test set: 138.00714661271277
+2024-08-28 23:40:09,265 - INFO - Started.
+2024-08-28 23:41:30,169 - INFO - Best params: {'estimator__device': 'gpu', 'estimator__n_estimators': 100, 'imputer__strategy': 'mean'}
+2024-08-28 23:41:30,169 - INFO - Best cross-validated R2: 0.8870436115341697
+2024-08-28 23:41:30,461 - INFO - R2 score on test set: 0.9313348020943554
+2024-08-28 23:41:30,461 - INFO - RMSE on test set: 161.55186818524092
+2024-08-29 15:36:27,873 - INFO - Started.
+2024-08-29 15:37:52,449 - INFO - Started.
+2024-08-29 15:38:40,767 - INFO - Started.
+2024-08-29 15:39:28,610 - INFO - Started.

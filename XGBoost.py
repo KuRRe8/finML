@@ -5,6 +5,7 @@ import enum
 import logging
 
 from xgboost import XGBRegressor
+from xgboost import DMatrix
 from sklearn.linear_model import Ridge, Lasso, RidgeCV, LassoCV, BayesianRidge
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import train_test_split
@@ -51,9 +52,12 @@ Step 1: Data Cleaning
 """
 
 origin = pd.read_stata(origin_path, preserve_dtypes=False)
+origin.loc[origin[TARGET_NAME] < 0, TARGET_NAME] = 0
 
 target_col = origin[TARGET_NAME] # always preserve target column
 
+#print(target_col.describe())
+#exit(0)
 droplist = [col for col in origin.columns if origin[col].nunique() < UNIQUE_THRESHOLD]
 origin.drop(droplist, axis=1, inplace=True)
 if _DEBUG_FALSE:
@@ -137,10 +141,13 @@ else:
 
 X_train, X_test, y_train, y_test = train_test_split(train_test_set.drop(columns=[TARGET_NAME]), train_test_set[TARGET_NAME], test_size=0.25, random_state=42) #random state to make the result reproducible
 
+dtrain = DMatrix(X_train, label=y_train)
+dtest = DMatrix(X_test, label=y_test)
+
 the_pipe = Pipeline([
     ('imputer', SimpleImputer(missing_values = pd.NA)),
     ('scaler', preprocessing.StandardScaler()),
-    ('estimator', XGBRegressor()) 
+    ('estimator', XGBRegressor(tree_method='gpu_hist')) 
 ])
 
 kf = KFold(n_splits=5, shuffle=True, random_state=42)

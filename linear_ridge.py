@@ -49,7 +49,7 @@ Step 1: Data Cleaning
 """
 
 origin = pd.read_stata(origin_path, preserve_dtypes=False)
-
+origin.loc[origin[TARGET_NAME] < 0, TARGET_NAME] = 0
 target_col = origin[TARGET_NAME] # always preserve target column
 
 droplist = [col for col in origin.columns if origin[col].nunique() < UNIQUE_THRESHOLD]
