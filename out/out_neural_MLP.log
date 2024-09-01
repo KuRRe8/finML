@@ -1,0 +1,5 @@
+2024-08-29 18:57:12,150 - INFO - Started.
+2024-08-29 19:20:09,360 - INFO - Best params: {'estimator__activation': 'relu', 'estimator__alpha': 0.001, 'estimator__learning_rate': 'adaptive', 'estimator__solver': 'adam', 'estimator__verbose': True, 'imputer__strategy': 'mean'}
+2024-08-29 19:20:09,361 - INFO - Best cross-validated R2: 0.8828217157748973
+2024-08-29 19:20:09,444 - INFO - R2 score on test set: 0.8904741634265061
+2024-08-29 19:20:09,444 - INFO - RMSE on test set: 204.03371257106733
