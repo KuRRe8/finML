@@ -36,6 +36,8 @@ _DEBUG_FALSE = False                                        # Always False
 
 TARGET_NAME = 'xrd'                                         # target column name from origin
 ADDED_COLS = ['risk']                                       # features added outside
+INTERESTED_COLS_0 = ['tang','at','lev','cashflow','q','risk']
+INTERESTED_COLS_1 = INTERESTED_COLS_0
 INTERESTED_ORIGIN_COLS = ['ppent','at','dlc','dltt','ib','dp','ceq','txdb','csho','prcc_f'] # features from origin
 
 with open('originPath.txt', 'r', encoding='utf-8') as f:
@@ -59,12 +61,44 @@ origin.loc[origin[TARGET_NAME] < 0, TARGET_NAME] = 0
 target_col = origin[TARGET_NAME] # always preserve target column
 total_samples = origin.shape[0]
 
-origin0 = None
-origin1 = None
+origin = origin[INTERESTED_ORIGIN_COLS + [TARGET_NAME]] # no 'risk' yet
+origin.loc[:, 'ceq'] = origin.loc[:, 'ceq'].fillna(0)
+origin.loc[:, 'txdb'] = origin.loc[:, 'txdb'].fillna(0)
+"""
+do something to add 'risk' column
+"""
+
+myImputer = SimpleImputer(missing_values = pd.NA, strategy='mean')
+
+origin0 = pd.DataFrame(myImputer.fit_transform(origin[INTERESTED_ORIGIN_COLS]), columns=INTERESTED_ORIGIN_COLS) # to be discussed
+origin0[TARGET_NAME] = target_col
+origin0['tang'] = (origin0['ppent'] / origin0['at']).replace([np.inf, -np.inf], np.nan).fillna(0)
+origin0['lev'] = ((origin0['dlc'] + origin0['dltt']) / origin0['at']).replace([np.inf, -np.inf], np.nan).fillna(0)
+origin0['cashflow'] = ((origin0['ib'] + origin0['dp'])/ origin0['at']).replace([np.inf, -np.inf], np.nan).fillna(0)
+#q=(at+csho*prcc_f-ceq-txdb)/at
+origin0['q'] = ((origin0['at'] + origin0['csho'] * origin0['prcc_f'] - origin0['ceq'] - origin0['txdb']) / origin0['at']).replace([np.inf, -np.inf], np.nan).fillna(0)
+origin0['risk'] = 0.0
+
+origin1 = pd.DataFrame(myImputer.fit_transform(origin[INTERESTED_ORIGIN_COLS]), columns=INTERESTED_ORIGIN_COLS) # to be discussed
+origin1[TARGET_NAME] = target_col
+origin1['tang'] = (origin1['ppent'] / origin1['at']).replace([np.inf, -np.inf], np.nan).fillna(0)
+origin1['lev'] = ((origin1['dlc'] + origin1['dltt']) / origin1['at']).replace([np.inf, -np.inf], np.nan).fillna(0)
+origin1['cashflow'] = ((origin1['ib'] + origin1['dp'])/ origin1['at']).replace([np.inf, -np.inf], np.nan).fillna(0)
+#q=(at-seq+csho*prcc_f)/at
+origin1['q'] = ((origin1['at'] - origin1['ceq'] + origin1['csho'] * origin1['prcc_f']) / origin1['at']).replace([np.inf, -np.inf], np.nan).fillna(0)
+origin1['risk'] = 0.0
+
+origin0 = origin0[INTERESTED_COLS_0 + [TARGET_NAME]]
+origin1 = origin1[INTERESTED_COLS_1 + [TARGET_NAME]]
 origin2 = origin[INTERESTED_ORIGIN_COLS + [TARGET_NAME]]
 
-origin2.loc[:, 'ceq'] = origin2.loc[:, 'ceq'].fillna(0)
-origin2.loc[:, 'txdb'] = origin2.loc[:, 'txdb'].fillna(0)
+
+prediction_set0 = origin0[origin0[TARGET_NAME].isnull()]
+train_test_set0 = origin0[origin0[TARGET_NAME].notnull()]
+
+prediction_set1 = origin1[origin1[TARGET_NAME].isnull()]
+train_test_set1 = origin1[origin1[TARGET_NAME].notnull()]
+
 # devide prediction set and train_test set as early as possible
 prediction_set2 = origin2[origin2[TARGET_NAME].isnull()]
 #train_set = pd.concat([origin, prediction_set]).drop_duplicates(keep=False)
@@ -101,41 +135,145 @@ if NEED_PCA:
 else:
     pass
 '''
+while(True):
+    X_train2, X_test2, y_train2, y_test2 = train_test_split(train_test_set2.drop(columns=[TARGET_NAME]), train_test_set2[TARGET_NAME], test_size=0.25, random_state=42) #random state to make the result reproducible
 
-X_train, X_test, y_train, y_test = train_test_split(train_test_set2.drop(columns=[TARGET_NAME]), train_test_set2[TARGET_NAME], test_size=0.25, random_state=42) #random state to make the result reproducible
+    the_pipe2 = Pipeline([
+        ('imputer2', SimpleImputer(missing_values = pd.NA)),
+        ('scaler2', preprocessing.StandardScaler()),
+        ('estimator2', Ridge()) #analytical solution
+    ])
 
-the_pipe = Pipeline([
-    ('imputer', SimpleImputer(missing_values = pd.NA)),
-    ('scaler', preprocessing.StandardScaler()),
-    ('estimator', Ridge()) #analytical solution
-])
-
-kf = KFold(n_splits=5, shuffle=True, random_state=42)
-
-
-param_grid = {
-    'imputer__strategy': ['mean', 'median', 'most_frequent'],
-    'estimator__alpha': [0.01, 8.0, 10.0] + list(np.arange(0.1, 2.5, 0.1)),
-    'estimator__fit_intercept': [True, False],
-    'estimator__positive': [True, False],
-}
+    kf2 = KFold(n_splits=5, shuffle=True, random_state=42)
 
 
-grid_search = GridSearchCV(the_pipe, param_grid, cv=kf, n_jobs=-2, verbose=2, scoring= 'neg_mean_squared_error') # leave one core for other operations
-
-grid_search.fit(X_train, y_train)
-
-logger.info(f"Best alpha: {grid_search.best_params_}")
-logger.info(f"Best cross-validated RMSE: {sqrt(-grid_search.best_score_)}")
-
-best_model = grid_search.best_estimator_
-y_pred = best_model.predict(X_test)
-
-r2 = r2_score(y_test, y_pred)
-logger.info(f"R2 score on test set: {r2}")
+    param_grid2 = {
+        'imputer2__strategy': ['mean', 'median', 'most_frequent'],
+        'estimator2__alpha': [0.01, 8.0, 10.0] + list(np.arange(0.1, 2.5, 0.1)),
+        'estimator2__fit_intercept': [True, False],
+        'estimator2__positive': [True, False],
+    }
 
 
-prediction_set2.loc[:,TARGET_NAME] = grid_search.predict(prediction_set2.drop(columns=[TARGET_NAME]))
+    grid_search2 = GridSearchCV(the_pipe2, param_grid2, cv=kf2, n_jobs=-2, verbose=2, scoring= 'r2') # leave one core for other operations
 
-prediction_set2[TARGET_NAME].to_csv('out\\explicit_2_linear_ridge.csv', index=False)
-##prediction_set.to_csv('out\\linear_ridge_all.csv', index=False)
+    grid_search2.fit(X_train2, y_train2)
+
+    logger.info(f"Best param for our approach2: {grid_search2.best_params_}")
+    logger.info(f"Best cross-validated R2 for our approach2: {grid_search2.best_score_}")
+
+    best_model2 = grid_search2.best_estimator_
+    y_pred2 = best_model2.predict(X_test2)
+
+    r2 = r2_score(y_test2, y_pred2)
+    logger.info(f"R2 score on test set for our approach2: {r2}")
+    rmse = sqrt(mean_squared_error(y_test2, y_pred2))
+    logger.info(f"RMSE on test set for our approach2: {rmse}")
+
+
+    prediction_set2.loc[:,TARGET_NAME] = grid_search2.predict(prediction_set2.drop(columns=[TARGET_NAME]))
+
+    prediction_set2[TARGET_NAME].to_csv('out\\approach2_linear_ridge.csv', index=False)
+    prediction_set2.to_csv('out\\approach2_linear_ridge_all.csv', index=False)
+
+    break
+
+while True:
+
+    """
+    at this point, the train_test_set should be already imputed either with mode, median, mean, or zero
+    the shape also should be adapted
+    no more arithmatic, no more shape conversion
+    we may use SimpleImputer.fit_transform() to the whole dataset, but it doesnt matter
+    """
+
+    X_train1, X_test1, y_train1, y_test1 = train_test_split(train_test_set1.drop(columns=[TARGET_NAME]), train_test_set1[TARGET_NAME], test_size=0.25, random_state=42) #random state to make the result reproducible
+    # the X_test1 and y_test1 are not used in the training process, they are used to evaluate the model
+    
+    the_pipe1 = Pipeline([
+        ('scaler1', preprocessing.StandardScaler()),
+        ('estimator1', Ridge()) #analytical solution
+    ])
+
+    kf1 = KFold(n_splits=5, shuffle=True, random_state=42)
+
+
+    param_grid1 = {
+        'estimator1__alpha': [0.01, 8.0, 10.0] + list(np.arange(0.1, 2.5, 0.1)),
+        'estimator1__fit_intercept': [True, False],
+        'estimator1__positive': [True, False],
+    }
+
+
+    grid_search1 = GridSearchCV(the_pipe1, param_grid1, cv=kf1, n_jobs=-2, verbose=2, scoring= 'r2') # leave one core for other operations
+
+    grid_search1.fit(X_train1, y_train1)
+
+    logger.info(f"Best param for our approach1: {grid_search1.best_params_}")
+    logger.info(f"Best cross-validated R2 for our approach1: {grid_search1.best_score_}")
+
+    best_model1 = grid_search1.best_estimator_
+    y_pred1 = best_model1.predict(X_test1)
+
+    r2 = r2_score(y_test1, y_pred1)
+    logger.info(f"R2 score on test set for our approach1: {r2}")
+    rmse = sqrt(mean_squared_error(y_test1, y_pred1))
+    logger.info(f"RMSE on test set for our approach1: {rmse}")
+
+    prediction_set1.loc[:,TARGET_NAME] = grid_search1.predict(prediction_set1.drop(columns=[TARGET_NAME]))
+
+    prediction_set1[TARGET_NAME].to_csv('out\\approach1_linear_ridge.csv', index=False)
+    prediction_set1.to_csv('out\\approach1_linear_ridge_all.csv', index=False)
+
+    
+    break
+
+while True:
+    """
+    at this point, the train_test_set should be already imputed either with mode, median, mean, or zero
+    the shape also should be adapted
+    no more arithmatic, no more shape conversion
+    we may use SimpleImputer.fit_transform() to the whole dataset, but it doesnt matter
+    """
+
+    X_train0, X_test0, y_train0, y_test0 = train_test_split(train_test_set0.drop(columns=[TARGET_NAME]), train_test_set0[TARGET_NAME], test_size=0.25, random_state=42) #random state to make the result reproducible
+    # the X_test0 and y_test0 are not used in the training process, they are used to evaluate the model
+    
+    the_pipe0 = Pipeline([
+        ('scaler0', preprocessing.StandardScaler()),
+        ('estimator0', Ridge()) #analytical solution
+    ])
+
+    kf0 = KFold(n_splits=5, shuffle=True, random_state=42)
+
+
+    param_grid0 = {
+        'estimator0__alpha': [0.01, 8.0, 10.0] + list(np.arange(0.1, 2.5, 0.1)),
+        'estimator0__fit_intercept': [True, False],
+        'estimator0__positive': [True, False],
+    }
+
+
+    grid_search0 = GridSearchCV(the_pipe0, param_grid0, cv=kf0, n_jobs=-2, verbose=2, scoring= 'r2') # leave one core for other operations
+
+    grid_search0.fit(X_train0, y_train0)
+
+    logger.info(f"Best param for our approach0: {grid_search0.best_params_}")
+    logger.info(f"Best cross-validated R2 for our approach0: {grid_search0.best_score_}")
+
+    best_model0 = grid_search0.best_estimator_
+    y_pred0 = best_model0.predict(X_test0)
+
+    r2 = r2_score(y_test0, y_pred0)
+    logger.info(f"R2 score on test set for our approach0: {r2}")
+    rmse = sqrt(mean_squared_error(y_test0, y_pred0))
+    logger.info(f"RMSE on test set for our approach0: {rmse}")
+
+    prediction_set0.loc[:,TARGET_NAME] = grid_search0.predict(prediction_set0.drop(columns=[TARGET_NAME]))
+
+    prediction_set0[TARGET_NAME].to_csv('out\\approach0_linear_ridge.csv', index=False)
+    prediction_set0.to_csv('out\\approach0_linear_ridge_all.csv', index=False)
+
+    
+
+    break

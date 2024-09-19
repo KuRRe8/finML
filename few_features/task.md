@@ -28,4 +28,4 @@ prcc_f
 
 
 
-以上三种训练输出分别命名为 explicit_0_*.csv explicit_1_*.csv explicit_2_*.csv
+以上三种训练输出分别命名为 approach0_*.csv approach1_*.csv approach2_*.csv

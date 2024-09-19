@@ -1,6 +1,13 @@
-2024-09-19 04:09:10,205 - INFO - Started.
-2024-09-19 04:28:01,033 - INFO - Started.
-2024-09-19 04:32:10,029 - INFO - Started.
-2024-09-19 04:36:50,701 - INFO - Started.
-2024-09-19 04:39:13,818 - INFO - Started.
-2024-09-19 04:44:11,980 - INFO - Started.
+2024-09-19 22:02:54,585 - INFO - Started.
+2024-09-19 22:05:16,498 - INFO - Best param for our approach2: {'estimator2__alpha': 10.0, 'estimator2__fit_intercept': True, 'estimator2__positive': False, 'imputer2__strategy': 'most_frequent'}
+2024-09-19 22:05:16,499 - INFO - Best cross-validated R2 for our approach2: 0.4892531339762881
+2024-09-19 22:05:16,508 - INFO - R2 score on test set for our approach2: 0.5337917376280087
+2024-09-19 22:05:16,508 - INFO - RMSE on test set for our approach2: 420.95301603323145
+2024-09-19 22:05:32,282 - INFO - Best param for our approach1: {'estimator1__alpha': 10.0, 'estimator1__fit_intercept': True, 'estimator1__positive': True}
+2024-09-19 22:05:32,285 - INFO - Best cross-validated R2 for our approach1: 0.3215363373487711
+2024-09-19 22:05:32,289 - INFO - R2 score on test set for our approach1: 0.3597629616182767
+2024-09-19 22:05:32,290 - INFO - RMSE on test set for our approach1: 493.30332181723884
+2024-09-19 22:05:48,256 - INFO - Best param for our approach0: {'estimator0__alpha': 10.0, 'estimator0__fit_intercept': True, 'estimator0__positive': True}
+2024-09-19 22:05:48,257 - INFO - Best cross-validated R2 for our approach0: 0.3215363373487672
+2024-09-19 22:05:48,263 - INFO - R2 score on test set for our approach0: 0.3597629616182134
+2024-09-19 22:05:48,264 - INFO - RMSE on test set for our approach0: 493.3033218172633
