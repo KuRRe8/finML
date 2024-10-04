@@ -1,6 +1,0 @@
-2024-08-26 16:07:10,101 - INFO - Started.
-2024-08-29 20:15:52,382 - INFO - Started.
-2024-08-30 14:01:12,126 - INFO - best_params_: {'estimator__C': 2, 'estimator__epsilon': 0.1, 'estimator__kernel': 'linear', 'imputer__strategy': 'mean'}
-2024-08-30 14:01:12,142 - INFO - Best cross-validated R2: 0.6880752167722761
-2024-08-30 14:10:09,009 - INFO - R2 score on test set: 0.7030549906740233
-2024-08-30 14:10:09,009 - INFO - RMSE on test set: 335.955427591808

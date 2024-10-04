@@ -33,8 +33,10 @@ class DimReduction(enum.Enum):
     PCA = 1
 
 TARGET_NAME = 'xrd'                                         # target column name
+PRESERVE_LIST = ['risk','fy_clo_prc']
+ALWAYS_DROP_LIST = ['GVKEY','ipodate']
 
-origin_path = os.path.expanduser('~/Downloads/annfunda.dta')
+origin_path = os.path.expanduser('~/Downloads/cp annually clean.csv')
 
 logger = logging.getLogger()
 filehandler = logging.FileHandler('out\\linear_lasso.log')
@@ -48,7 +50,9 @@ logger.info('Started.')
 Step 1: Data Cleaning
 """
 
-origin = pd.read_stata(origin_path, preserve_dtypes=False)
+origin = pd.read_csv(origin_path)
+origin = origin.drop(columns=ALWAYS_DROP_LIST)
+preserve_cols:pd.DataFrame = origin[PRESERVE_LIST]
 origin.loc[origin[TARGET_NAME] < 0, TARGET_NAME] = 0
 target_col = origin[TARGET_NAME] # always preserve target column
 
@@ -81,7 +85,7 @@ origin['gvkey'] = s_gvkey
 
 # datetime641: datadate
 base_date = pd.Timestamp('1987-01-01')
-origin['datadate'] = (origin['datadate'] - base_date).dt.days
+origin['datadate'] = (pd.to_datetime(origin['datadate']) - base_date).dt.days
 
 if _DEBUG_FALSE:
     origin.to_csv('temp\\origin3.csv', index=False)
@@ -93,6 +97,10 @@ origin.drop(droplist, axis=1, inplace=True)
 if _DEBUG_FALSE:
     origin.to_csv('temp\\origin4.csv', index=False)
     origin.describe().to_csv('temp\\origin4_describe.csv')
+
+common_columns = origin.columns.intersection(preserve_cols.columns)
+origin = origin.drop(columns=common_columns)
+origin = pd.concat([origin, preserve_cols], axis=1)
 
 if TARGET_NAME not in origin.columns:
     origin = pd.concat([origin, target_col], axis=1) # always preserve target column

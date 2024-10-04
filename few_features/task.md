@@ -13,18 +13,7 @@ gen q=(at+csho*prcc_f-ceq-txdb)/at
 
 这组跟RD应该是能特别好的predict的关系
 
-然后把上面的ratio拆开再做一组 也就是
-at
-ppent
-dlc
-dltt
-ib
-dp
-ceq (missing set to 0)
-txdb (missing set to 0)
-csho
-prcc_f
-
+然后是自选的90多个features
 
 
 

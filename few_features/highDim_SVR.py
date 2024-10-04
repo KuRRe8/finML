@@ -39,7 +39,8 @@ TARGET_NAME = 'xrd'                                         # target column name
 ADDED_COLS = ['risk']                                       # features added outside
 INTERESTED_COLS_0 = ['tang','at','lev','cashflow','q','risk']
 INTERESTED_COLS_1 = INTERESTED_COLS_0
-INTERESTED_ORIGIN_COLS = ['ppent','at','dlc','dltt','ib','dp','ceq','txdb','csho','prcc_f'] # features from origin
+INTERESTED_ORIGIN_COLS = ['ppent','at','dlc','dltt','ib','dp','ceq','txdb','csho','prcc_f','risk'] # features from origin
+INTERESTED_PHD_COLS = pd.read_csv('features selected by xinman.csv').columns.tolist()
 
 with open('originPath.txt', 'r', encoding='utf-8') as f:
     origin_path = f.readline().strip()
@@ -57,17 +58,15 @@ logger.info('Started.')
 Step 1: Data Cleaning
 """
 
-origin = pd.read_stata(origin_path, preserve_dtypes=False)
+origin = pd.read_csv(origin_path)
 origin.loc[origin[TARGET_NAME] < 0, TARGET_NAME] = 0
 target_col = origin[TARGET_NAME] # always preserve target column
 total_samples = origin.shape[0]
 
-origin = origin[INTERESTED_ORIGIN_COLS + [TARGET_NAME]] # no 'risk' yet
+origin = origin[INTERESTED_ORIGIN_COLS + [TARGET_NAME]]
 origin.loc[:, 'ceq'] = origin.loc[:, 'ceq'].fillna(0)
 origin.loc[:, 'txdb'] = origin.loc[:, 'txdb'].fillna(0)
-"""
-do something to add 'risk' column
-"""
+
 
 myImputer = SimpleImputer(missing_values = pd.NA, strategy='mean')
 
@@ -78,7 +77,6 @@ origin0['lev'] = ((origin0['dlc'] + origin0['dltt']) / origin0['at']).replace([n
 origin0['cashflow'] = ((origin0['ib'] + origin0['dp'])/ origin0['at']).replace([np.inf, -np.inf], np.nan).fillna(0)
 #q=(at+csho*prcc_f-ceq-txdb)/at
 origin0['q'] = ((origin0['at'] + origin0['csho'] * origin0['prcc_f'] - origin0['ceq'] - origin0['txdb']) / origin0['at']).replace([np.inf, -np.inf], np.nan).fillna(0)
-origin0['risk'] = 0.0
 
 origin1 = pd.DataFrame(myImputer.fit_transform(origin[INTERESTED_ORIGIN_COLS]), columns=INTERESTED_ORIGIN_COLS) # to be discussed
 origin1[TARGET_NAME] = target_col
@@ -87,11 +85,20 @@ origin1['lev'] = ((origin1['dlc'] + origin1['dltt']) / origin1['at']).replace([n
 origin1['cashflow'] = ((origin1['ib'] + origin1['dp'])/ origin1['at']).replace([np.inf, -np.inf], np.nan).fillna(0)
 #q=(at-seq+csho*prcc_f)/at
 origin1['q'] = ((origin1['at'] - origin1['ceq'] + origin1['csho'] * origin1['prcc_f']) / origin1['at']).replace([np.inf, -np.inf], np.nan).fillna(0)
-origin1['risk'] = 0.0
 
 origin0 = origin0[INTERESTED_COLS_0 + [TARGET_NAME]]
 origin1 = origin1[INTERESTED_COLS_1 + [TARGET_NAME]]
-origin2 = origin[INTERESTED_ORIGIN_COLS + [TARGET_NAME]]
+origin_ = pd.read_csv(origin_path)
+origin2 = pd.DataFrame()
+for item in INTERESTED_PHD_COLS:
+    if item in origin_.columns.tolist():
+        origin2[item] = origin_[item]
+
+if TARGET_NAME not in origin2.columns.tolist():
+    origin2[TARGET_NAME] = target_col
+droplist = [col for col in origin2.columns if origin2[col].dtype == 'object']
+droplist = droplist +['tie','xstf','xstfws']
+origin2.drop(droplist, axis=1, inplace=True)
 
 
 prediction_set0 = origin0[origin0[TARGET_NAME].isnull()]
@@ -150,9 +157,8 @@ while(True):
 
     param_grid2 = {
     'imputer2__strategy': ['mean'],
-    'estimator2__kernel': ['linear', 'poly', 'rbf', 'sigmoid'],
-    'estimator2__C': [0.5, 1, 2],
-    'estimator2__epsilon': [0.1, 0.2],
+    'estimator2__kernel': ['linear', 'sigmoid'],
+
 }
 
 
@@ -201,9 +207,7 @@ while True:
 
 
     param_grid1 = {
-    'estimator1__kernel': ['linear', 'poly', 'rbf', 'sigmoid'],
-    'estimator1__C': [0.5, 1, 2],
-    'estimator1__epsilon': [0.1, 0.2],
+    'estimator1__kernel': ['linear', 'sigmoid'],
 }
 
 
@@ -251,9 +255,8 @@ while True:
 
 
     param_grid0 = {
-    'estimator0__kernel': ['linear', 'poly', 'rbf', 'sigmoid'],
-    'estimator0__C': [0.5, 1, 2],
-    'estimator0__epsilon': [0.1, 0.2],
+    'estimator0__kernel': ['linear','sigmoid'],
+
 }
 
 
