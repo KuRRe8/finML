@@ -34,6 +34,9 @@ os.environ['PYDEVD_WARN_SLOW_RESOLVE_TIMEOUT'] = '10'
 current_dir = os.path.dirname(os.path.abspath(__file__))
 os.chdir(current_dir)
 
+num_epochs = 1000000
+patience = 10  # 早停耐心，表示在验证集上表现没有提升的epochs数
+min_delta = 0.01  # 最小的改善幅度
 
 _DEBUG = True                                               # 
 _DEBUG_FALSE = False                                        # Always False
@@ -153,6 +156,55 @@ else:
     pass
 '''
 
+class EarlyStopping:
+    """Early stops the training if validation loss doesn't improve after a given patience."""
+    def __init__(self, patience=7, verbose=False, delta=0, path='checkpoint.pt', trace_func=print):
+        """
+        Args:
+            patience (int): How long to wait after last time validation loss improved.
+                            Default: 7
+            verbose (bool): If True, prints a message for each validation loss improvement. 
+                            Default: False
+            delta (float): Minimum change in the monitored quantity to qualify as an improvement.
+                            Default: 0
+            path (str): Path for the checkpoint to be saved to.
+                            Default: 'checkpoint.pt'
+            trace_func (function): trace print function.
+                            Default: print            
+        """
+        self.patience = patience
+        self.verbose = verbose
+        self.counter = 0
+        self.best_score = None
+        self.early_stop = False
+        self.val_loss_min = np.Inf
+        self.delta = delta
+        self.path = path
+        self.trace_func = trace_func
+    def __call__(self, val_loss, model):
+
+        score = -val_loss
+
+        if self.best_score is None:
+            self.best_score = score
+            self.save_checkpoint(val_loss, model)
+        elif score < self.best_score + self.delta:
+            self.counter += 1
+            self.trace_func(f'EarlyStopping counter: {self.counter} out of {self.patience}')
+            if self.counter >= self.patience:
+                self.early_stop = True
+        else:
+            self.best_score = score
+            self.save_checkpoint(val_loss, model)
+            self.counter = 0
+
+    def save_checkpoint(self, val_loss, model):
+        '''Saves model when validation loss decrease.'''
+        if self.verbose:
+            self.trace_func(f'Validation loss decreased ({self.val_loss_min:.6f} --> {val_loss:.6f}).  Saving model ...')
+        torch.save(model.state_dict(), self.path)
+        self.val_loss_min = val_loss
+
 X_train, X_test, y_train, y_test = train_test_split(train_test_set.drop(columns=[TARGET_NAME]), train_test_set[TARGET_NAME], test_size=0.25, random_state=42) #random state to make the result reproducible
 
 
@@ -188,15 +240,32 @@ criterion = torch.nn.MSELoss().to(device)
 optimizer = torch.optim.Adam(tab_resnet.parameters(), lr=0.01)
 
 #no KFold, no cross validation
+es = EarlyStopping(patience=patience, delta=min_delta)
 num_epochs = 50000
 tab_resnet.train()
 for epoch in range(num_epochs):
+    
+    tab_resnet.train()
     optimizer.zero_grad()
     outputs = tab_resnet(X_train_tensor)
     loss = criterion(outputs, y_train_tensor)
     loss.backward()
     optimizer.step()
-    if epoch % 100 == 0:
+
+
+    tab_resnet.eval()
+    with torch.no_grad():
+        X_test_tensor_inner = torch.tensor(X_test_processed, dtype=torch.float32).to(device)
+        y_test_tensor_inner = torch.tensor(y_test.values, dtype=torch.float32).unsqueeze(1).to(device)
+        predictions_inner = tab_resnet(X_test_tensor_inner)
+        loss = criterion(predictions_inner,y_test_tensor_inner)
+        es(loss,tab_resnet)
+    
+    if es.early_stop:
+        print('early stopped, in epoch' + str(epoch))
+        break
+
+    if epoch % 500 == 0:
         logger.info(f'Epoch {epoch+1}/{num_epochs}, Loss: {loss.item()}')
     if epoch % 10 == 0:
         print(f'Epoch {epoch+1}/{num_epochs}, Loss: {loss.item()}')
