@@ -1,0 +1,13 @@
+2024-10-05 12:17:32,501 - INFO - Started.
+2024-10-05 12:44:43,439 - INFO - Best param for our approach2: {'estimator2__alpha': 2.7, 'estimator2__fit_intercept': True, 'estimator2__positive': False, 'imputer2__strategy': 'median'}
+2024-10-05 12:44:43,439 - INFO - Best cross-validated R2 for our approach2: 0.7929278668655686
+2024-10-05 12:44:43,548 - INFO - R2 score on test set for our approach2: 0.8555417730724921
+2024-10-05 12:44:43,548 - INFO - RMSE on test set for our approach2: 330.080552014656
+2024-10-05 12:45:18,485 - INFO - Best param for our approach1: {'estimator1__alpha': 10.0, 'estimator1__fit_intercept': True, 'estimator1__positive': True}
+2024-10-05 12:45:18,485 - INFO - Best cross-validated R2 for our approach1: 0.3003878397059994
+2024-10-05 12:45:18,500 - INFO - R2 score on test set for our approach1: 0.31270500388877687
+2024-10-05 12:45:18,500 - INFO - RMSE on test set for our approach1: 719.9799260328891
+2024-10-05 12:45:44,859 - INFO - Best param for our approach0: {'estimator0__alpha': 10.0, 'estimator0__fit_intercept': True, 'estimator0__positive': True}
+2024-10-05 12:45:44,859 - INFO - Best cross-validated R2 for our approach0: 0.3003878397059994
+2024-10-05 12:45:44,859 - INFO - R2 score on test set for our approach0: 0.31270500388877687
+2024-10-05 12:45:44,859 - INFO - RMSE on test set for our approach0: 719.9799260328891

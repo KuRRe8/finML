@@ -1,0 +1,13 @@
+2024-10-05 13:27:39,102 - INFO - Started.
+2024-10-05 13:51:42,672 - INFO - Best param for our approach2: {'estimator2__max_depth': 100, 'estimator2__min_samples_leaf': 10, 'estimator2__min_samples_split': 10, 'estimator2__n_estimators': 100, 'imputer2__strategy': 'mean'}
+2024-10-05 13:51:42,672 - INFO - Best cross-validated R2 for our approach2: 0.7770147502435897
+2024-10-05 13:51:43,579 - INFO - R2 score on test set for our approach2: 0.7403974776880446
+2024-10-05 13:51:43,579 - INFO - RMSE on test set for our approach2: 442.4897864785015
+2024-10-05 13:54:33,310 - INFO - Best param for our approach1: {'estimator1__max_depth': 100, 'estimator1__min_samples_leaf': 10, 'estimator1__min_samples_split': 10, 'estimator1__n_estimators': 100}
+2024-10-05 13:54:33,310 - INFO - Best cross-validated R2 for our approach1: 0.6715918063390258
+2024-10-05 13:54:33,966 - INFO - R2 score on test set for our approach1: 0.5871118584464037
+2024-10-05 13:54:33,966 - INFO - RMSE on test set for our approach1: 558.0395782347113
+2024-10-05 13:56:51,186 - INFO - Best param for our approach0: {'estimator0__max_depth': 100, 'estimator0__min_samples_leaf': 10, 'estimator0__min_samples_split': 20, 'estimator0__n_estimators': 100}
+2024-10-05 13:56:51,186 - INFO - Best cross-validated R2 for our approach0: 0.6813975173035166
+2024-10-05 13:56:51,842 - INFO - R2 score on test set for our approach0: 0.5981489115184709
+2024-10-05 13:56:51,842 - INFO - RMSE on test set for our approach0: 550.5304835784874

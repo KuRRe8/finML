@@ -1,0 +1,19 @@
+2024-10-05 02:29:51,855 - INFO - Started.
+2024-10-05 02:40:26,098 - INFO - Best alpha: {'estimator__alpha': 0.1, 'estimator__fit_intercept': True, 'estimator__positive': False, 'imputer__strategy': 'median'}
+2024-10-05 02:40:26,098 - INFO - Best cross-validated RMSE: 274.5658367145465
+2024-10-05 02:40:26,411 - INFO - R2 score on test set: 0.8987919877470512
+2024-10-08 18:50:38,540 - INFO - Started.
+2024-10-08 18:51:33,275 - INFO - Started.
+2024-10-08 23:26:15,294 - INFO - Started.
+2024-10-08 23:37:34,064 - INFO - Best alpha: {'estimator__alpha': 8.0, 'estimator__fit_intercept': True, 'estimator__positive': False, 'imputer__strategy': 'median'}
+2024-10-08 23:37:34,071 - INFO - Best cross-validated RMSE: 354.29545891316377
+2024-10-08 23:37:34,741 - INFO - R2 score on test set: 0.7535442505738128
+2024-10-10 19:24:54,007 - INFO - Started.
+2024-10-10 19:36:51,593 - INFO - Started.
+2024-10-10 19:43:59,008 - INFO - Started.
+2024-10-10 19:47:04,505 - INFO - Started.
+2024-10-10 20:02:26,615 - INFO - Started.
+2024-10-10 20:05:17,326 - INFO - Started.
+2024-10-10 20:17:28,834 - INFO - Best alpha: {'estimator__alpha': 10.0, 'estimator__fit_intercept': True, 'estimator__positive': False, 'imputer__strategy': 'median'}
+2024-10-10 20:17:28,845 - INFO - Best cross-validated RMSE: 354.37535872345336
+2024-10-10 20:17:29,537 - INFO - R2 score on test set: 0.7536678444098588

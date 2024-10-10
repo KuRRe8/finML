@@ -36,6 +36,7 @@ class DimReduction(enum.Enum):
 
 TARGET_NAME = 'xrd'                                         # target column name
 PRESERVE_LIST = ['risk','fy_clo_prc']
+PRESERVE_LIST = []
 ALWAYS_DROP_LIST = ['GVKEY','ipodate']
 
 origin_path = os.path.expanduser('~/Downloads/cp annually clean.csv')
@@ -80,9 +81,13 @@ if _DEBUG_FALSE:
 # now we have much smaller dataset, 1 datetime and 19 object need to be processed
 # object1: gvkey
 s_gvkey = origin['gvkey']
-#hasher = sklearn.feature_extraction.FeatureHasher(n_features=2**18, input_type='string') #use 256K hash space for 37.4K distinct gvkey
-s_gvkey = s_gvkey.astype('int64')
+hasher = sklearn.feature_extraction.FeatureHasher(n_features=2**3, input_type='string') 
+s_gvkey = s_gvkey.astype('category')
 origin['gvkey'] = s_gvkey
+hashed_features = hasher.transform(origin['gvkey'].astype('string').apply(lambda x: [x]))
+hashed_df = pd.DataFrame(hashed_features.toarray(), columns=[f'gvkey_hash_{i}' for i in range(hashed_features.shape[1])])
+origin = pd.concat([origin, hashed_df], axis=1)
+origin.drop('gvkey', axis=1, inplace=True)
 
 # datetime641: datadate
 base_date = pd.Timestamp('1987-01-01')

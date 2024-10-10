@@ -1,0 +1,5 @@
+2024-10-05 04:04:05,889 - INFO - Started.
+2024-10-05 04:05:49,776 - INFO - Best params: {'estimator__device': 'gpu', 'estimator__n_estimators': 100, 'imputer__strategy': 'mean'}
+2024-10-05 04:05:49,776 - INFO - Best cross-validated R2: 0.8203351221298554
+2024-10-05 04:05:50,276 - INFO - R2 score on test set: 0.8702058109554862
+2024-10-05 04:05:50,276 - INFO - RMSE on test set: 312.87900480301215

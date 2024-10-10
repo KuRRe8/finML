@@ -1,0 +1,5 @@
+2024-10-05 00:23:34,659 - INFO - Started.
+2024-10-05 00:25:45,458 - INFO - Best params: {'estimator__alpha_1': 1e-05, 'estimator__alpha_2': 1e-06, 'estimator__fit_intercept': True, 'estimator__lambda_1': 1e-06, 'estimator__lambda_2': 1e-06, 'imputer__strategy': 'median'}
+2024-10-05 00:25:45,458 - INFO - Best cross-validated R2: 0.8322697289073225
+2024-10-05 00:25:45,818 - INFO - R2 score on test set: 0.8988631258084442
+2024-10-05 00:25:45,818 - INFO - RMSE on test set: 276.1872083816758
