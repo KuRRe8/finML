@@ -1,0 +1,26 @@
+2024-10-24 23:28:02,381 - INFO - Started.
+2024-10-24 23:28:26,543 - INFO - Best params: {'estimator__alpha': 10.0, 'estimator__fit_intercept': True, 'estimator__positive': False, 'imputer__strategy': 'median'}
+2024-10-24 23:28:26,544 - INFO - Best cross-validated R2: 0.4917860209763414
+2024-10-24 23:28:26,553 - INFO - R2 score on test set: 0.48180057100610507
+2024-10-24 23:28:26,554 - INFO - RMSE on test set: 540.7867382196986
+2024-10-24 23:28:26,554 - INFO - Adjusted R2 score on test set: 0.4812012566894003
+2024-10-24 23:28:45,243 - INFO - Best params: {'estimator__alpha': 10.0, 'estimator__fit_intercept': True, 'estimator__positive': False, 'imputer__strategy': 'mean'}
+2024-10-24 23:28:45,244 - INFO - Best cross-validated R2: 0.5167319431616337
+2024-10-24 23:28:45,250 - INFO - R2 score on test set: 0.37632477404045517
+2024-10-24 23:28:45,251 - INFO - RMSE on test set: 759.4105283054773
+2024-10-24 23:28:45,251 - INFO - Adjusted R2 score on test set: 0.3756034735700603
+2024-10-24 23:29:03,410 - INFO - Best params: {'estimator__alpha': 10.0, 'estimator__fit_intercept': True, 'estimator__positive': False, 'imputer__strategy': 'mean'}
+2024-10-24 23:29:03,410 - INFO - Best cross-validated R2: 0.4696439559975615
+2024-10-24 23:29:03,418 - INFO - R2 score on test set: 0.5057103611783333
+2024-10-24 23:29:03,418 - INFO - RMSE on test set: 538.6815109765304
+2024-10-24 23:29:03,418 - INFO - Adjusted R2 score on test set: 0.505138699303445
+2024-10-24 23:29:21,575 - INFO - Best params: {'estimator__alpha': 10.0, 'estimator__fit_intercept': True, 'estimator__positive': False, 'imputer__strategy': 'mean'}
+2024-10-24 23:29:21,576 - INFO - Best cross-validated R2: 0.47074250972735043
+2024-10-24 23:29:21,583 - INFO - R2 score on test set: 0.5442749529117716
+2024-10-24 23:29:21,583 - INFO - RMSE on test set: 559.1003733469885
+2024-10-24 23:29:21,583 - INFO - Adjusted R2 score on test set: 0.543747892228337
+2024-10-24 23:29:39,174 - INFO - Best params: {'estimator__alpha': 10.0, 'estimator__fit_intercept': True, 'estimator__positive': False, 'imputer__strategy': 'mean'}
+2024-10-24 23:29:39,174 - INFO - Best cross-validated R2: 0.4693218909966803
+2024-10-24 23:29:39,182 - INFO - R2 score on test set: 0.504176233870262
+2024-10-24 23:29:39,182 - INFO - RMSE on test set: 622.9502764386717
+2024-10-24 23:29:39,182 - INFO - Adjusted R2 score on test set: 0.5036027977277695

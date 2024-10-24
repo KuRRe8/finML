@@ -27,7 +27,7 @@ _DEBUG = True                                               #
 _DEBUG_FALSE = False                                        # Always False
 
 UNIQUE_THRESHOLD = 3                                      # for each feature, at least this number of unique values considered as good for discrimination, should be small number
-FEATURE_SELECTION_RATIO = 0.7                               # for each feature, those process less than this ratio of values will be removed 0.7*400k=280k
+FEATURE_SELECTION_RATIO = 0.8                               # for each feature, those process less than this ratio of values will be removed 0.7*400k=280k
 NEED_PCA = False                                            # whether to use PCA for feature selection, another point of view
 class DimReduction(enum.Enum):
     None_ = 0
@@ -37,8 +37,9 @@ TARGET_NAME = 'xrd'                                         # target column name
 PRESERVE_LIST = ['risk','fy_clo_prc']
 PRESERVE_LIST = []
 ALWAYS_DROP_LIST = ['GVKEY','ipodate']
+ALWAYS_DROP_LIST = []
 
-origin_path = os.path.expanduser('~/Downloads/cp annually clean.csv')
+origin_path = os.path.expanduser('/home/users/ntu/yang0886/scratch/features_cp_only.csv')
 
 logger = logging.getLogger()
 filehandler = logging.FileHandler('out\\svr.log')
@@ -53,13 +54,13 @@ Step 1: Data Cleaning
 """
 
 origin = pd.read_csv(origin_path)
-origin = origin.drop(columns=ALWAYS_DROP_LIST)
-preserve_cols:pd.DataFrame = origin[PRESERVE_LIST]
+#origin = origin.drop(columns=ALWAYS_DROP_LIST)
+#preserve_cols:pd.DataFrame = origin[PRESERVE_LIST]
 origin.loc[origin[TARGET_NAME] < 0, TARGET_NAME] = 0
 target_col = origin[TARGET_NAME] # always preserve target column
 
 droplist = [col for col in origin.columns if origin[col].nunique() < UNIQUE_THRESHOLD]
-origin.drop(droplist, axis=1, inplace=True)
+#origin.drop(droplist, axis=1, inplace=True)
 if _DEBUG_FALSE:
     origin.to_csv('temp\\origin1.csv', index=False)
 
@@ -90,8 +91,8 @@ origin = pd.concat([origin, hashed_df], axis=1)
 origin.drop('gvkey', axis=1, inplace=True)
 
 # datetime641: datadate
-base_date = pd.Timestamp('1987-01-01')
-origin['datadate'] = (pd.to_datetime(origin['datadate']) - base_date).dt.days
+#base_date = pd.Timestamp('1987-01-01')
+#origin['datadate'] = (pd.to_datetime(origin['datadate']) - base_date).dt.days
 
 if _DEBUG_FALSE:
     origin.to_csv('temp\\origin3.csv', index=False)
@@ -103,10 +104,10 @@ origin.drop(droplist, axis=1, inplace=True)
 if _DEBUG_FALSE:
     origin.to_csv('temp\\origin4.csv', index=False)
     origin.describe().to_csv('temp\\origin4_describe.csv')
-common_columns = origin.columns.intersection(preserve_cols.columns)
-origin = origin.drop(columns=common_columns)
-origin = pd.concat([origin, preserve_cols], axis=1)
 
+#common_columns = origin.columns.intersection(preserve_cols.columns)
+#origin = origin.drop(columns=common_columns)
+#origin = pd.concat([origin, preserve_cols], axis=1)
 
 if TARGET_NAME not in origin.columns:
     origin = pd.concat([origin, target_col], axis=1) # always preserve target column
