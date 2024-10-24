@@ -25,8 +25,8 @@ os.environ['PYDEVD_WARN_SLOW_RESOLVE_TIMEOUT'] = '10'
 _DEBUG = True                                               # 
 _DEBUG_FALSE = False                                        # Always False
 
-UNIQUE_THRESHOLD = 3                                      # for each feature, at least this number of unique values considered as good for discrimination, should be small number
-FEATURE_SELECTION_RATIO = 0.7                               # for each feature, those process less than this ratio of values will be removed 0.7*400k=280k
+UNIQUE_THRESHOLD = 1                                      # for each feature, at least this number of unique values considered as good for discrimination, should be small number
+FEATURE_SELECTION_RATIO = 0.4                               # for each feature, those process less than this ratio of values will be removed 0.7*400k=280k
 NEED_PCA = False                                            # whether to use PCA for feature selection, another point of view
 class DimReduction(enum.Enum):
     None_ = 0
@@ -36,8 +36,9 @@ TARGET_NAME = 'xrd'                                         # target column name
 PRESERVE_LIST = ['risk','fy_clo_prc']
 PRESERVE_LIST = []
 ALWAYS_DROP_LIST = ['GVKEY','ipodate']
-
-origin_path = os.path.expanduser('~/Downloads/cp annually clean.csv')
+ALWAYS_DROP_LIST = ['afudcc', 'afudci', 'nco', 'niit', 'nim', 'pll', 'rll', 'tie', 'tii', 'uxintd','cmp' ,'tdc' ,'utme']
+ALWAYS_DROP_LIST = ['lagxrd']
+origin_path = os.path.expanduser('/home/users/ntu/yang0886/scratch/features_cp_only.csv')
 
 logger = logging.getLogger()
 filehandler = logging.FileHandler('out\\linear_bayesian.log')
@@ -51,9 +52,9 @@ logger.info('Started.')
 Step 1: Data Cleaning
 """
 
-origin = pd.read_csv(origin_path)
+origin = pd.read_csv(origin_path,low_memory=False)
 origin = origin.drop(columns=ALWAYS_DROP_LIST)
-preserve_cols:pd.DataFrame = origin[PRESERVE_LIST]
+#preserve_cols:pd.DataFrame = origin[PRESERVE_LIST]
 origin.loc[origin[TARGET_NAME] < 0, TARGET_NAME] = 0
 target_col = origin[TARGET_NAME] # always preserve target column
 
@@ -90,7 +91,7 @@ origin.drop('gvkey', axis=1, inplace=True)
 
 # datetime641: datadate
 base_date = pd.Timestamp('1987-01-01')
-origin['datadate'] = (pd.to_datetime(origin['datadate']) - base_date).dt.days
+#origin['datadate'] = (pd.to_datetime(origin['datadate']) - base_date).dt.days
 
 if _DEBUG_FALSE:
     origin.to_csv('temp\\origin3.csv', index=False)
@@ -103,9 +104,9 @@ if _DEBUG_FALSE:
     origin.to_csv('temp\\origin4.csv', index=False)
     origin.describe().to_csv('temp\\origin4_describe.csv')
 
-common_columns = origin.columns.intersection(preserve_cols.columns)
-origin = origin.drop(columns=common_columns)
-origin = pd.concat([origin, preserve_cols], axis=1)
+#common_columns = origin.columns.intersection(preserve_cols.columns)
+#origin = origin.drop(columns=common_columns)
+#origin = pd.concat([origin, preserve_cols], axis=1)
 
 if TARGET_NAME not in origin.columns:
     origin = pd.concat([origin, target_col], axis=1) # always preserve target column
@@ -145,49 +146,55 @@ if NEED_PCA:
 else:
     pass
 '''
+for i in range(1, 6):
+    X_train, X_test, y_train, y_test = train_test_split(train_test_set.drop(columns=[TARGET_NAME]), train_test_set[TARGET_NAME], test_size=0.08, random_state=None) #random state to make the result reproducible
 
-X_train, X_test, y_train, y_test = train_test_split(train_test_set.drop(columns=[TARGET_NAME]), train_test_set[TARGET_NAME], test_size=0.25, random_state=42) #random state to make the result reproducible
+    the_pipe = Pipeline([
+        ('imputer', SimpleImputer(missing_values = pd.NA)),
+        ('scaler', preprocessing.StandardScaler()),
+        ('estimator', BayesianRidge()) #iterative solution
+    ])
 
-the_pipe = Pipeline([
-    ('imputer', SimpleImputer(missing_values = pd.NA)),
-    ('scaler', preprocessing.StandardScaler()),
-    ('estimator', BayesianRidge()) #iterative solution
-])
-
-kf = KFold(n_splits=5, shuffle=True, random_state=42)
-
-
-param_grid = {
-    'imputer__strategy': ['mean', 'median'],
-    'estimator__alpha_1': [1e-6, 1e-5],
-    'estimator__alpha_2': [1e-6],
-    'estimator__lambda_1': [1e-6, 1e-5],
-    'estimator__lambda_2': [1e-6],
-    'estimator__fit_intercept': [True],
-
-}
+    kf = KFold(n_splits=5, shuffle=True, random_state=None)
 
 
-grid_search = GridSearchCV(the_pipe, param_grid, cv=kf, n_jobs=-2, verbose=2, scoring= 'r2') # leave one core for other operations
+    param_grid = {
+        'imputer__strategy': ['mean', 'median'],
+        'estimator__max_iter': [1000],
+        'estimator__alpha_1': [1e-6, 1e-5],
+        'estimator__alpha_2': [1e-6, 1e-5],
+        'estimator__lambda_1': [1e-6, 1e-5],
+        'estimator__lambda_2': [1e-6, 1e-5],
+        'estimator__fit_intercept': [True],
 
-grid_search.fit(X_train, y_train)
-
-logger.info(f"Best params: {grid_search.best_params_}")
-logger.info(f"Best cross-validated R2: {grid_search.best_score_}")
-
-best_model = grid_search.best_estimator_
-y_pred = best_model.predict(X_test)
-
-r2 = r2_score(y_test, y_pred)
-rmse = sqrt(mean_squared_error(y_test, y_pred))
-logger.info(f"R2 score on test set: {r2}")
-logger.info(f"RMSE on test set: {rmse}")
+    }
 
 
+    grid_search = GridSearchCV(the_pipe, param_grid, cv=kf, n_jobs=-2, verbose=2, scoring= 'r2') # leave one core for other operations
+
+    grid_search.fit(X_train, y_train)
+
+    logger.info(f"Best params: {grid_search.best_params_}")
+    logger.info(f"Best cross-validated R2: {grid_search.best_score_}")
+
+    best_model = grid_search.best_estimator_
+    y_pred = best_model.predict(X_test)
+
+    r2 = r2_score(y_test, y_pred)
+    n = X_test.shape[0]  # number of samples
+    p = X_test.shape[1]  # number of features
+    adjusted_r2 = 1 - ((1 - r2) * (n - 1) / (n - p - 1))
+
+    rmse = sqrt(mean_squared_error(y_test, y_pred))
+    logger.info(f"R2 score on test set: {r2}")
+    logger.info(f"RMSE on test set: {rmse}")
+    logger.info(f"Adjusted R2 score on test set: {adjusted_r2}")
 
 
 
-prediction_set.loc[:,TARGET_NAME] = grid_search.predict(prediction_set.drop(columns=[TARGET_NAME]))
 
-prediction_set[TARGET_NAME].to_csv('out\\linear_bayesian.csv', index=False)
-##prediction_set.to_csv('out\\linear_bayesian_all.csv', index=False)
+
+    prediction_set.loc[:,TARGET_NAME] = grid_search.predict(prediction_set.drop(columns=[TARGET_NAME]))
+
+    prediction_set[TARGET_NAME].to_csv('out\\linear_bayesian.csv', index=False)
+    ##prediction_set.to_csv('out\\linear_bayesian_all.csv', index=False)

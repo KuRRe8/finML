@@ -33,6 +33,7 @@
 - [x] [XGBoost](XGBoost.py)-->eXtreme Gradient Boosting
 - [x] [neural_MLP](neural_MLP.py)-->Multi-layer Perceptron
 - [x] [out](out\\)-->Output folder
+- [x] [pbs](pbs\\)-->PBS scripts(Used for supercomputer scheduler)
 - [x] [temp*](temp\\)-->Temporary files
   
 ## usage

@@ -30,19 +30,20 @@ from pytorch_widedeep.preprocessing import TabPreprocessor
 """
 Step 0: Set param
 """
+print(f"Hostname: {os.getenv('HOSTNAME')}")
 os.environ['PYDEVD_WARN_SLOW_RESOLVE_TIMEOUT'] = '10'
 current_dir = os.path.dirname(os.path.abspath(__file__))
 os.chdir(current_dir)
 
-num_epochs = 1000000
-patience = 10  # 早停耐心，表示在验证集上表现没有提升的epochs数
-min_delta = 0.01  # 最小的改善幅度
+num_epochs = 100000
+patience = 300  # 早停耐心，表示在验证集上表现没有提升的epochs数
+min_delta = 0.0000001  # 最小的改善幅度
 
 _DEBUG = True                                               # 
 _DEBUG_FALSE = False                                        # Always False
 
-UNIQUE_THRESHOLD = 3                                      # for each feature, at least this number of unique values considered as good for discrimination, should be small number
-FEATURE_SELECTION_RATIO = 0.7                               # for each feature, those process less than this ratio of values will be removed 0.7*400k=280k
+UNIQUE_THRESHOLD = 1                                      # for each feature, at least this number of unique values considered as good for discrimination, should be small number
+FEATURE_SELECTION_RATIO = 0.4                               # for each feature, those process less than this ratio of values will be removed 0.7*400k=280k
 NEED_PCA = False                                            # whether to use PCA for feature selection, another point of view
 class DimReduction(enum.Enum):
     None_ = 0
@@ -50,12 +51,14 @@ class DimReduction(enum.Enum):
 
 TARGET_NAME = 'xrd'                                         # target column name
 PRESERVE_LIST = ['risk','fy_clo_prc']
+PRESERVE_LIST = []
 ALWAYS_DROP_LIST = ['GVKEY','ipodate']
-
-origin_path = os.path.expanduser('~/Downloads/cp annually clean.csv')
+ALWAYS_DROP_LIST = ['afudcc', 'afudci', 'nco', 'niit', 'nim', 'pll', 'rll', 'tie', 'tii', 'uxintd']
+ALWAYS_DROP_LIST = ['lagxrd']
+origin_path = os.path.expanduser('~/scratch/features_cp_only.csv')
 
 logger = logging.getLogger()
-filehandler = logging.FileHandler('out\\tabresnet.log')
+filehandler = logging.FileHandler(os.path.join('out', 'tabresnet.log'))
 filehandler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
 logger.addHandler(filehandler)
 logger.setLevel(logging.DEBUG)
@@ -66,7 +69,7 @@ logger.info('Started.')
 Step 1: Data Cleaning
 """
 
-origin = pd.read_csv(origin_path)
+origin = pd.read_csv(origin_path,low_memory=False)
 origin = origin.drop(columns=ALWAYS_DROP_LIST)
 preserve_cols:pd.DataFrame = origin[PRESERVE_LIST]
 origin.loc[origin[TARGET_NAME] < 0, TARGET_NAME] = 0
@@ -93,15 +96,16 @@ if _DEBUG_FALSE:
 #memory usage: 536.7+ MB
 
 # now we have much smaller dataset, 1 datetime and 19 object need to be processed
-# object1: gvkey
+# object1: gvkey 
 s_gvkey = origin['gvkey']
 #hasher = sklearn.feature_extraction.FeatureHasher(n_features=2**18, input_type='string') #use 256K hash space for 37.4K distinct gvkey
 s_gvkey = s_gvkey.astype('int64')
 origin['gvkey'] = s_gvkey
+# DO NOT need to hash gvkey, we will process it in TabPreprocessor
 
 # datetime641: datadate
 base_date = pd.Timestamp('1987-01-01')
-origin['datadate'] = (pd.to_datetime(origin['datadate']) - base_date).dt.days
+#origin['datadate'] = (pd.to_datetime(origin['datadate']) - base_date).dt.days
 
 if _DEBUG_FALSE:
     origin.to_csv('temp\\origin3.csv', index=False)
@@ -229,7 +233,7 @@ tab_resnet = TabResnet(column_idx=tab_preprocessor.column_idx,
                        blocks_dims=[64,16,1])
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-device = torch.device("cpu")
+print(device)
 tab_resnet.to(device)
 
 X_train_tensor = torch.tensor(X_train_processed, dtype=torch.float32).to(device)
@@ -241,7 +245,6 @@ optimizer = torch.optim.Adam(tab_resnet.parameters(), lr=0.01)
 
 #no KFold, no cross validation
 es = EarlyStopping(patience=patience, delta=min_delta)
-num_epochs = 50000
 tab_resnet.train()
 for epoch in range(num_epochs):
     
@@ -283,7 +286,8 @@ with torch.no_grad():
     rmse = sqrt(mean_squared_error(y_test_tensor, predictions))
     r2 = r2_score(y_test_tensor, predictions)
     logger.info(f'RMSE: {rmse}, R2: {r2}')
-    
+    ajusted_r2 = 1 - ((1 - r2) * (X_test_tensor.shape[0] - 1) / (X_test_tensor.shape[0] - X_test_tensor.shape[1] - 1))
+    logger.info(f'Adjusted R2: {ajusted_r2}')
     prediction_set.loc[:,TARGET_NAME] = tab_resnet(prediction_set_processed_tensor).cpu().numpy()
 
     prediction_set[TARGET_NAME].to_csv('out\\tabresnet.csv', index=False)

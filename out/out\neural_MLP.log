@@ -1,0 +1,26 @@
+2024-10-24 23:29:42,684 - INFO - Started.
+2024-10-24 23:31:42,766 - INFO - Best params: {'estimator__activation': 'relu', 'estimator__alpha': 0.01, 'estimator__learning_rate': 'adaptive', 'estimator__solver': 'adam', 'estimator__verbose': True, 'imputer__strategy': 'median'}
+2024-10-24 23:31:42,767 - INFO - Best cross-validated R2: 0.5952678399194363
+2024-10-24 23:31:42,787 - INFO - R2 score on test set: 0.6727387738762272
+2024-10-24 23:31:42,787 - INFO - RMSE on test set: 411.60328710723485
+2024-10-24 23:31:42,787 - INFO - Adjusted R2 score on test set: 0.6724663443344214
+2024-10-24 23:33:44,635 - INFO - Best params: {'estimator__activation': 'relu', 'estimator__alpha': 0.001, 'estimator__learning_rate': 'adaptive', 'estimator__solver': 'adam', 'estimator__verbose': True, 'imputer__strategy': 'mean'}
+2024-10-24 23:33:44,636 - INFO - Best cross-validated R2: 0.490841534070462
+2024-10-24 23:33:44,658 - INFO - R2 score on test set: 0.6285711111149934
+2024-10-24 23:33:44,658 - INFO - RMSE on test set: 489.4614315622614
+2024-10-24 23:33:44,658 - INFO - Adjusted R2 score on test set: 0.628261914076252
+2024-10-24 23:35:38,887 - INFO - Best params: {'estimator__activation': 'relu', 'estimator__alpha': 0.001, 'estimator__learning_rate': 'adaptive', 'estimator__solver': 'adam', 'estimator__verbose': True, 'imputer__strategy': 'mean'}
+2024-10-24 23:35:38,888 - INFO - Best cross-validated R2: 0.6102368009985973
+2024-10-24 23:35:38,909 - INFO - R2 score on test set: 0.5654659085142426
+2024-10-24 23:35:38,909 - INFO - RMSE on test set: 638.4029378741086
+2024-10-24 23:35:38,909 - INFO - Adjusted R2 score on test set: 0.5651041793694717
+2024-10-24 23:37:33,715 - INFO - Best params: {'estimator__activation': 'relu', 'estimator__alpha': 0.001, 'estimator__learning_rate': 'adaptive', 'estimator__solver': 'adam', 'estimator__verbose': True, 'imputer__strategy': 'mean'}
+2024-10-24 23:37:33,716 - INFO - Best cross-validated R2: 0.6172156039059952
+2024-10-24 23:37:33,738 - INFO - R2 score on test set: 0.6391102654063205
+2024-10-24 23:37:33,739 - INFO - RMSE on test set: 456.53259276781483
+2024-10-24 23:37:33,739 - INFO - Adjusted R2 score on test set: 0.6388098417166514
+2024-10-24 23:39:31,897 - INFO - Best params: {'estimator__activation': 'relu', 'estimator__alpha': 0.01, 'estimator__learning_rate': 'adaptive', 'estimator__solver': 'adam', 'estimator__verbose': True, 'imputer__strategy': 'median'}
+2024-10-24 23:39:31,897 - INFO - Best cross-validated R2: 0.6143614225393368
+2024-10-24 23:39:31,920 - INFO - R2 score on test set: 0.5600270867073844
+2024-10-24 23:39:31,920 - INFO - RMSE on test set: 558.7008171184232
+2024-10-24 23:39:31,920 - INFO - Adjusted R2 score on test set: 0.5596608299998761
