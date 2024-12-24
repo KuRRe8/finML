@@ -43,22 +43,23 @@ _DEBUG = True                                               #
 _DEBUG_FALSE = False                                        # Always False
 
 UNIQUE_THRESHOLD = 1                                      # for each feature, at least this number of unique values considered as good for discrimination, should be small number
-FEATURE_SELECTION_RATIO = 0.4                               # for each feature, those process less than this ratio of values will be removed 0.7*400k=280k
+FEATURE_SELECTION_RATIO = 0.1                               # for each feature, those process less than this ratio of values will be removed 0.7*400k=280k
 NEED_PCA = False                                            # whether to use PCA for feature selection, another point of view
 class DimReduction(enum.Enum):
     None_ = 0
     PCA = 1
 
 TARGET_NAME = 'xrd'                                         # target column name
-PRESERVE_LIST = ['risk','fy_clo_prc']
 PRESERVE_LIST = []
-ALWAYS_DROP_LIST = ['GVKEY','ipodate']
-ALWAYS_DROP_LIST = ['afudcc', 'afudci', 'nco', 'niit', 'nim', 'pll', 'rll', 'tie', 'tii', 'uxintd']
-ALWAYS_DROP_LIST = ['lagxrd']
-origin_path = os.path.expanduser('~/scratch/features_cp_only.csv')
+ALWAYS_DROP_LIST = ['cashflow_v', 'market_value', 'yield', 'return_volatility', 'stock_price']
+pathprefix = os.path.dirname(os.path.abspath(__file__))
+origin_path = None
+with open(os.path.join(pathprefix,'datapath'), 'r') as f:
+    origin_path = f.readline().strip()
+METHODNAME = 'tabresnet'
 
 logger = logging.getLogger()
-filehandler = logging.FileHandler(os.path.join('out', 'tabresnet.log'))
+filehandler = logging.FileHandler(os.path.join(pathprefix,'out', f'{METHODNAME}.log'))
 filehandler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
 logger.addHandler(filehandler)
 logger.setLevel(logging.DEBUG)
@@ -78,7 +79,7 @@ target_col = origin[TARGET_NAME] # always preserve target column
 droplist = [col for col in origin.columns if origin[col].nunique() < UNIQUE_THRESHOLD]
 origin.drop(droplist, axis=1, inplace=True)
 if _DEBUG_FALSE:
-    origin.to_csv('temp\\origin1.csv', index=False)
+    origin.to_csv(os.path.join(pathprefix,'temp','s1alwaysdrop.csv'), index=False)
 
 total_samples = origin.shape[0]
 droplist = [col for col in origin.columns if origin[col].isnull().sum() > total_samples * (1 - FEATURE_SELECTION_RATIO)]
@@ -86,14 +87,7 @@ droplist = [col for col in origin.columns if origin[col].isnull().sum() > total_
 origin.drop(droplist, axis=1, inplace=True)
 
 if _DEBUG_FALSE:
-    origin.to_csv('temp\\origin2.csv', index=False)
-
-#origin.info()
-#<class 'pandas.core.frame.DataFrame'>
-#RangeIndex: 401947 entries, 0 to 401946
-#Columns: 175 entries, gvkey to weburl
-#dtypes: datetime64[ns](1), float64(155), object(19)
-#memory usage: 536.7+ MB
+    origin.to_csv(os.path.join(pathprefix,'temp','s2strongfeature.csv'), index=False)
 
 # now we have much smaller dataset, 1 datetime and 19 object need to be processed
 # object1: gvkey 
@@ -108,7 +102,7 @@ base_date = pd.Timestamp('1987-01-01')
 #origin['datadate'] = (pd.to_datetime(origin['datadate']) - base_date).dt.days
 
 if _DEBUG_FALSE:
-    origin.to_csv('temp\\origin3.csv', index=False)
+    origin.to_csv(os.path.join(pathprefix,'temp','s3converttype.csv'), index=False)
 
 # all other objects/strings dropped. tic, cusip, conm, cik, add2, weburl, etc.
 droplist = [col for col in origin.columns if origin[col].dtype == 'object']
@@ -132,21 +126,11 @@ train_test_set = origin[origin[TARGET_NAME].notnull()]
 if _DEBUG_FALSE:
     prediction_set.info()
     train_test_set.info()
-    prediction_set.to_csv('temp1\\prediction5.csv', index=False)
-    prediction_set.describe().to_csv('temp1\\prediction5_describe.csv')
-    train_test_set.to_csv('temp1\\train5.csv', index=False)
-    train_test_set.describe().to_csv('temp1\\train5_describe.csv')
+    prediction_set.to_csv(os.path.join(pathprefix,'temp1','pred.csv'), index=False)
+    prediction_set.describe().to_csv(os.path.join(pathprefix,'temp1','pred_describe.csv'))
+    train_test_set.to_csv(os.path.join(pathprefix,'temp1','train.csv'), index=False)
+    train_test_set.describe().to_csv(os.path.join(pathprefix,'temp1','train_describe.csv'))
     exit(0)  
-
-if _DEBUG_FALSE: # should fit train set not origin or train_test_set!!!! 
-    # impute missing values,
-    myImputer = SimpleImputer(missing_values = pd.NA, strategy='mean')
-    imputed = pd.DataFrame(myImputer.fit_transform(origin), columns= origin.columns)
-    raise NotImplementedError('impute missing values should be done after split')
-    if _DEBUG_FALSE:
-        imputed.info()
-        imputed.to_csv('temp\\imputed5.csv', index=False)
-        imputed.describe().to_csv('temp\\imputed5_describe.csv')  
 
 '''
 # standardize the data, process 400k samples together
@@ -290,4 +274,4 @@ with torch.no_grad():
     logger.info(f'Adjusted R2: {ajusted_r2}')
     prediction_set.loc[:,TARGET_NAME] = tab_resnet(prediction_set_processed_tensor).cpu().numpy()
 
-    prediction_set[TARGET_NAME].to_csv('out\\tabresnet.csv', index=False)
+    prediction_set[TARGET_NAME].to_csv(os.path.join(pathprefix,'out',f'{METHODNAME}.csv'), index=False)
