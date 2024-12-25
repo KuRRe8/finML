@@ -56,7 +56,7 @@ Step 1: Data Cleaning
 
 origin = pd.read_csv(origin_path,low_memory=False)
 logger.info(f"Data loaded from {origin_path}")
-origin = origin.drop(columns=ALWAYS_DROP_LIST)
+origin = origin.drop(columns=ALWAYS_DROP_LIST, errors='ignore')
 origin.loc[origin[TARGET_NAME] < 0, TARGET_NAME] = 0
 target_col = origin[TARGET_NAME] # always preserve target column
 

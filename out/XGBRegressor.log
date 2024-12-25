@@ -1,0 +1,62 @@
+2024-12-25 20:28:29,807 - INFO - Started.
+2024-12-25 20:28:30,834 - INFO - Data loaded from /home/users/ntu/yang0886/scratch/Dec2024/CPfactors2.csv
+2024-12-25 20:29:29,288 - INFO - Best params: {'estimator__n_estimators': 50, 'imputer__strategy': 'mean'}
+2024-12-25 20:29:29,289 - INFO - Best cross-validated R2: nan
+2024-12-25 20:35:18,719 - INFO - Started.
+2024-12-25 20:35:19,390 - INFO - Data loaded from /home/users/ntu/yang0886/scratch/Dec2024/CPfactors2.csv
+2024-12-25 20:36:13,740 - INFO - Best params: {'estimator__n_estimators': 50, 'imputer__strategy': 'mean'}
+2024-12-25 20:36:13,740 - INFO - Best cross-validated R2: nan
+2024-12-25 20:37:54,042 - INFO - Started.
+2024-12-25 20:37:54,663 - INFO - Data loaded from /home/users/ntu/yang0886/scratch/Dec2024/CPfactors2.csv
+2024-12-25 20:38:48,103 - INFO - Best params: {'estimator__n_estimators': 100, 'imputer__strategy': 'mean'}
+2024-12-25 20:38:48,103 - INFO - Best cross-validated R2: 0.8631517588613362
+2024-12-25 20:38:48,132 - INFO - R2 score on test set: 0.9036696941826983
+2024-12-25 20:38:48,132 - INFO - RMSE on test set: 242.60948919152762
+2024-12-25 20:38:48,132 - INFO - Adjusted R2 score on test set: 0.9035586257072339
+2024-12-25 20:39:38,288 - INFO - Best params: {'estimator__n_estimators': 100, 'imputer__strategy': 'mean'}
+2024-12-25 20:39:38,288 - INFO - Best cross-validated R2: 0.835979297081877
+2024-12-25 20:39:38,307 - INFO - R2 score on test set: 0.9022205909792982
+2024-12-25 20:39:38,307 - INFO - RMSE on test set: 209.1200840652399
+2024-12-25 20:39:38,307 - INFO - Adjusted R2 score on test set: 0.9021078516933633
+2024-12-25 20:40:27,426 - INFO - Best params: {'estimator__n_estimators': 100, 'imputer__strategy': 'mean'}
+2024-12-25 20:40:27,426 - INFO - Best cross-validated R2: 0.8638855436202714
+2024-12-25 20:40:27,446 - INFO - R2 score on test set: 0.9033061004623756
+2024-12-25 20:40:27,446 - INFO - RMSE on test set: 266.57563387858767
+2024-12-25 20:40:27,446 - INFO - Adjusted R2 score on test set: 0.9031946127647374
+2024-12-25 20:41:16,365 - INFO - Best params: {'estimator__n_estimators': 100, 'imputer__strategy': 'mean'}
+2024-12-25 20:41:16,365 - INFO - Best cross-validated R2: 0.9160104895988668
+2024-12-25 20:41:16,383 - INFO - R2 score on test set: 0.6702518815218066
+2024-12-25 20:41:16,383 - INFO - RMSE on test set: 495.61485550308015
+2024-12-25 20:41:16,383 - INFO - Adjusted R2 score on test set: 0.6698716831979679
+2024-12-25 20:42:05,466 - INFO - Best params: {'estimator__n_estimators': 100, 'imputer__strategy': 'mean'}
+2024-12-25 20:42:05,467 - INFO - Best cross-validated R2: 0.8319783647961374
+2024-12-25 20:42:05,486 - INFO - R2 score on test set: 0.9193218674009045
+2024-12-25 20:42:05,486 - INFO - RMSE on test set: 220.99992921803116
+2024-12-25 20:42:05,486 - INFO - Adjusted R2 score on test set: 0.9192288458215058
+2024-12-25 21:01:30,578 - INFO - Started.
+2024-12-25 21:01:30,840 - INFO - Data loaded from /home/users/ntu/yang0886/scratch/Dec2024/5CPfactors2.csv
+2024-12-25 21:02:20,992 - INFO - Best params: {'estimator__n_estimators': 100, 'imputer__strategy': 'mean'}
+2024-12-25 21:02:20,992 - INFO - Best cross-validated R2: 0.7681248472376438
+2024-12-25 21:02:21,012 - INFO - R2 score on test set: 0.7359945619571997
+2024-12-25 21:02:21,012 - INFO - RMSE on test set: 361.53517966382435
+2024-12-25 21:02:21,012 - INFO - Adjusted R2 score on test set: 0.7358762685940183
+2024-12-25 21:03:07,610 - INFO - Best params: {'estimator__n_estimators': 100, 'imputer__strategy': 'mean'}
+2024-12-25 21:03:07,614 - INFO - Best cross-validated R2: 0.7202337197243227
+2024-12-25 21:03:07,623 - INFO - R2 score on test set: 0.7473214378256539
+2024-12-25 21:03:07,623 - INFO - RMSE on test set: 365.612696943804
+2024-12-25 21:03:07,623 - INFO - Adjusted R2 score on test set: 0.747208219714902
+2024-12-25 21:03:54,187 - INFO - Best params: {'estimator__n_estimators': 100, 'imputer__strategy': 'mean'}
+2024-12-25 21:03:54,187 - INFO - Best cross-validated R2: 0.7375136176395892
+2024-12-25 21:03:54,198 - INFO - R2 score on test set: 0.7458281733938316
+2024-12-25 21:03:54,198 - INFO - RMSE on test set: 362.72854524779177
+2024-12-25 21:03:54,198 - INFO - Adjusted R2 score on test set: 0.74571428619356
+2024-12-25 21:04:41,229 - INFO - Best params: {'estimator__n_estimators': 100, 'imputer__strategy': 'mean'}
+2024-12-25 21:04:41,229 - INFO - Best cross-validated R2: 0.7438831697566427
+2024-12-25 21:04:41,240 - INFO - R2 score on test set: 0.8225067242495727
+2024-12-25 21:04:41,240 - INFO - RMSE on test set: 353.3174453179851
+2024-12-25 21:04:41,240 - INFO - Adjusted R2 score on test set: 0.8224271945372825
+2024-12-25 21:05:28,016 - INFO - Best params: {'estimator__n_estimators': 100, 'imputer__strategy': 'mean'}
+2024-12-25 21:05:28,016 - INFO - Best cross-validated R2: 0.7258889554581287
+2024-12-25 21:05:28,026 - INFO - R2 score on test set: 0.8423937157824268
+2024-12-25 21:05:28,026 - INFO - RMSE on test set: 359.023897690278
+2024-12-25 21:05:28,026 - INFO - Adjusted R2 score on test set: 0.842323096868071

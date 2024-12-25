@@ -1,0 +1,6 @@
+#!/bin/sh
+#PBS -q normal
+#PBS -l select=1:ngpus=1
+#PBS -l walltime=00:59:00
+#PBS -N finML_gpu_interactive
+# Start of commands

@@ -36,7 +36,7 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 os.chdir(current_dir)
 
 num_epochs = 100000
-patience = 300  # 早停耐心，表示在验证集上表现没有提升的epochs数
+patience = 600  # 早停耐心，表示在验证集上表现没有提升的epochs数
 min_delta = 0.0000001  # 最小的改善幅度
 
 _DEBUG = True                                               # 
@@ -62,7 +62,7 @@ logger = logging.getLogger()
 filehandler = logging.FileHandler(os.path.join(pathprefix,'out', f'{METHODNAME}.log'))
 filehandler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
 logger.addHandler(filehandler)
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 
 logger.info('Started.')
 
@@ -72,7 +72,7 @@ Step 1: Data Cleaning
 
 origin = pd.read_csv(origin_path,low_memory=False)
 logger.info(f"Data loaded from {origin_path}")
-origin = origin.drop(columns=ALWAYS_DROP_LIST)
+origin = origin.drop(columns=ALWAYS_DROP_LIST, errors='ignore')
 preserve_cols:pd.DataFrame = origin[PRESERVE_LIST]
 origin.loc[origin[TARGET_NAME] < 0, TARGET_NAME] = 0
 target_col = origin[TARGET_NAME] # always preserve target column
@@ -218,7 +218,7 @@ tab_resnet = TabResnet(column_idx=tab_preprocessor.column_idx,
                        blocks_dims=[64,16,1])
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-print(device)
+logger.info(f'use {device}')
 tab_resnet.to(device)
 
 X_train_tensor = torch.tensor(X_train_processed, dtype=torch.float32).to(device)
