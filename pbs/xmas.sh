@@ -4,12 +4,12 @@
 #PBS -j oe
 # Number of cores
 #PBS -l select=1:ncpus=127:mem=991G
-#PBS -l walltime=1:58:00
+#PBS -l walltime=3:58:00
 #PBS -M yang0886@e.ntu.edu.sg
 #PBS -m abe
-#PBS -N finML_job
+#PBS -N finML_2datasets
 # Start of commands
-cd $PBS_O_WORKDIR
+
 echo thisssssssssssssssssssssssssssssssss is the start of PBS script
 
 module load miniforge3
@@ -21,6 +21,4 @@ python linear_lasso.py
 python linear_ridge.py
 python neural_MLP.py
 python tree_RF.py
-python XGBoost.py
-
-#python DeepLearning/tabresnet.py
+#python XGBoost.py

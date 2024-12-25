@@ -54,7 +54,7 @@ PRESERVE_LIST = []
 ALWAYS_DROP_LIST = ['cashflow_v', 'market_value', 'yield', 'return_volatility', 'stock_price']
 pathprefix = os.path.dirname(os.path.abspath(__file__))
 origin_path = None
-with open(os.path.join(pathprefix,'datapath'), 'r') as f:
+with open(os.path.join(pathprefix,'..','datapath'), 'r') as f:
     origin_path = f.readline().strip()
 METHODNAME = 'tabresnet'
 
@@ -71,6 +71,7 @@ Step 1: Data Cleaning
 """
 
 origin = pd.read_csv(origin_path,low_memory=False)
+logger.info(f"Data loaded from {origin_path}")
 origin = origin.drop(columns=ALWAYS_DROP_LIST)
 preserve_cols:pd.DataFrame = origin[PRESERVE_LIST]
 origin.loc[origin[TARGET_NAME] < 0, TARGET_NAME] = 0
@@ -108,9 +109,9 @@ if _DEBUG_FALSE:
 droplist = [col for col in origin.columns if origin[col].dtype == 'object']
 origin.drop(droplist, axis=1, inplace=True)
 
-if _DEBUG_FALSE:
-    origin.to_csv('temp\\origin4.csv', index=False)
-    origin.describe().to_csv('temp\\origin4_describe.csv')
+if _DEBUG:
+    origin.to_csv(os.path.join(pathprefix,'temp','s4beforesplit.csv'), index=False)
+    origin.describe().to_csv(os.path.join(pathprefix,'temp','s4beforesplit_desc.csv'))
 common_columns = origin.columns.intersection(preserve_cols.columns)
 origin = origin.drop(columns=common_columns)
 origin = pd.concat([origin, preserve_cols], axis=1)
@@ -146,7 +147,7 @@ else:
 
 class EarlyStopping:
     """Early stops the training if validation loss doesn't improve after a given patience."""
-    def __init__(self, patience=7, verbose=False, delta=0, path='checkpoint.pt', trace_func=print):
+    def __init__(self, patience=7, verbose=False, delta=0, path='checkpoint.pt', trace_func=logger.debug):
         """
         Args:
             patience (int): How long to wait after last time validation loss improved.

@@ -56,6 +56,7 @@ Step 1: Data Cleaning
 """
 
 origin = pd.read_csv(origin_path,low_memory=False)
+logger.info(f"Data loaded from {origin_path}")
 origin = origin.drop(columns=ALWAYS_DROP_LIST)
 origin.loc[origin[TARGET_NAME] < 0, TARGET_NAME] = 0
 target_col = origin[TARGET_NAME] # always preserve target column
@@ -146,9 +147,9 @@ for i in range(1, 6):
 
     param_grid = {
         'imputer__strategy': ['mean', 'median'],
-        'estimator__activation': ['tanh', 'relu'],
+        'estimator__activation': ['tanh', 'relu', 'sigmoid'],
         'estimator__solver': ['sgd', 'adam'],
-        'estimator__alpha': [0.0001, 0.001, 0.01],
+        'estimator__alpha': [0.0001, 0.001, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5],
         'estimator__learning_rate': ['adaptive'],
         'estimator__verbose': [True]
 
