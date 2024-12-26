@@ -82,3 +82,30 @@
 2024-12-25 21:02:43,140 - INFO - R2 score on test set: 0.05575741407709767
 2024-12-25 21:02:43,140 - INFO - RMSE on test set: 936.8175163738064
 2024-12-25 21:02:43,140 - INFO - Adjusted R2 score on test set: 0.05516970251337028
+2024-12-26 18:32:48,929 - INFO - Started.
+2024-12-26 18:32:54,062 - INFO - Data loaded from /home/users/ntu/yang0886/scratch/Dec2024/CPfactors2.csv
+2024-12-26 18:33:25,920 - INFO - Best params: {'estimator__alpha': 10.0, 'estimator__fit_intercept': True, 'estimator__positive': False, 'imputer__strategy': 'mean'}
+2024-12-26 18:33:25,920 - INFO - Best cross-validated R2: 0.24159275000096309
+2024-12-26 18:33:25,925 - INFO - R2 score on test set: -0.31034687873544486
+2024-12-26 18:33:25,925 - INFO - RMSE on test set: 213.9029496895652
+2024-12-26 18:33:25,926 - INFO - Adjusted R2 score on test set: -0.3298529180861476
+2024-12-26 18:33:46,396 - INFO - Best params: {'estimator__alpha': 10.0, 'estimator__fit_intercept': True, 'estimator__positive': True, 'imputer__strategy': 'mean'}
+2024-12-26 18:33:46,397 - INFO - Best cross-validated R2: 0.2468027345521407
+2024-12-26 18:33:46,400 - INFO - R2 score on test set: -0.29446874005766466
+2024-12-26 18:33:46,400 - INFO - RMSE on test set: 212.60301434964921
+2024-12-26 18:33:46,400 - INFO - Adjusted R2 score on test set: -0.31373841482209563
+2024-12-26 18:34:06,508 - INFO - Best params: {'estimator__alpha': 10.0, 'estimator__fit_intercept': True, 'estimator__positive': True, 'imputer__strategy': 'mean'}
+2024-12-26 18:34:06,508 - INFO - Best cross-validated R2: 0.23676515022730432
+2024-12-26 18:34:06,512 - INFO - R2 score on test set: -0.29446874005766466
+2024-12-26 18:34:06,512 - INFO - RMSE on test set: 212.60301434964921
+2024-12-26 18:34:06,512 - INFO - Adjusted R2 score on test set: -0.31373841482209563
+2024-12-26 18:34:27,236 - INFO - Best params: {'estimator__alpha': 10.0, 'estimator__fit_intercept': True, 'estimator__positive': True, 'imputer__strategy': 'median'}
+2024-12-26 18:34:27,236 - INFO - Best cross-validated R2: 0.24015556212908393
+2024-12-26 18:34:27,239 - INFO - R2 score on test set: -0.2892786767826008
+2024-12-26 18:34:27,239 - INFO - RMSE on test set: 212.1763793502658
+2024-12-26 18:34:27,239 - INFO - Adjusted R2 score on test set: -0.30847109141071294
+2024-12-26 18:34:47,861 - INFO - Best params: {'estimator__alpha': 10.0, 'estimator__fit_intercept': True, 'estimator__positive': False, 'imputer__strategy': 'median'}
+2024-12-26 18:34:47,861 - INFO - Best cross-validated R2: 0.2449588909837591
+2024-12-26 18:34:47,865 - INFO - R2 score on test set: -0.30520948165037254
+2024-12-26 18:34:47,865 - INFO - RMSE on test set: 213.48321975904815
+2024-12-26 18:34:47,865 - INFO - Adjusted R2 score on test set: -0.32463904486233086

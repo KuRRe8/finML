@@ -7,7 +7,7 @@
 #PBS -l walltime=01:59:00
 #PBS -M yang0886@e.ntu.edu.sg
 #PBS -m abe
-#PBS -N finML_gpu
+#PBS -N finML_gpuxgb
 # Start of commands
 cd $PBS_O_WORKDIR
 echo thisss is the start of PBS script
@@ -17,4 +17,3 @@ conda activate xgb
 cd ~/proj/finML
 
 python XGBoost.py
-python DeepLearning/tabresnet.py

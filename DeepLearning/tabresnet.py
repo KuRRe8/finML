@@ -51,7 +51,7 @@ class DimReduction(enum.Enum):
 
 TARGET_NAME = 'xrd'                                         # target column name
 PRESERVE_LIST = []
-ALWAYS_DROP_LIST = ['cashflow_v', 'market_value', 'yield', 'return_volatility', 'stock_price']
+ALWAYS_DROP_LIST = ['cashflow_v', 'market_value', 'yield', 'return_volatility', 'stock_price', 'GVKEY', 'sic']
 pathprefix = os.path.dirname(os.path.abspath(__file__))
 origin_path = None
 with open(os.path.join(pathprefix,'..','datapath'), 'r') as f:
@@ -120,18 +120,32 @@ if TARGET_NAME not in origin.columns:
     origin = pd.concat([origin, target_col], axis=1) # always preserve target column
 
 # devide prediction set and train_test set as early as possible
-prediction_set = origin[origin[TARGET_NAME].isnull()]
-#train_set = pd.concat([origin, prediction_set]).drop_duplicates(keep=False)
-train_test_set = origin[origin[TARGET_NAME].notnull()]
 
-if _DEBUG_FALSE:
-    prediction_set.info()
-    train_test_set.info()
-    prediction_set.to_csv(os.path.join(pathprefix,'temp1','pred.csv'), index=False)
-    prediction_set.describe().to_csv(os.path.join(pathprefix,'temp1','pred_describe.csv'))
-    train_test_set.to_csv(os.path.join(pathprefix,'temp1','train.csv'), index=False)
-    train_test_set.describe().to_csv(os.path.join(pathprefix,'temp1','train_describe.csv'))
-    exit(0)  
+prediction_set = origin[origin[TARGET_NAME].isnull()]
+
+filtered_indices = []
+def find_non_empty_key2(group: pd.DataFrame) -> None:
+    global filtered_indices
+    preceedingNa = False
+    for index, row in group.iterrows():
+        if pd.notna(row[TARGET_NAME]):
+            if preceedingNa:
+                filtered_indices.append(index)
+            preceedingNa = False
+        else:
+            preceedingNa = True
+
+origin.groupby('gvkey').apply(find_non_empty_key2, include_groups=False)
+
+test_set = origin.loc[filtered_indices].copy()
+train_set = origin.drop(filtered_indices).copy()
+train_set = train_set[train_set[TARGET_NAME].notnull()]
+
+
+X_train = train_set.drop(columns=[TARGET_NAME])
+y_train = train_set[TARGET_NAME]
+X_test = test_set.drop(columns=[TARGET_NAME])
+y_test = test_set[TARGET_NAME]
 
 '''
 # standardize the data, process 400k samples together
@@ -194,7 +208,7 @@ class EarlyStopping:
         torch.save(model.state_dict(), self.path)
         self.val_loss_min = val_loss
 
-X_train, X_test, y_train, y_test = train_test_split(train_test_set.drop(columns=[TARGET_NAME]), train_test_set[TARGET_NAME], test_size=0.25, random_state=42) #random state to make the result reproducible
+#X_train, X_test, y_train, y_test = train_test_split(train_test_set.drop(columns=[TARGET_NAME]), train_test_set[TARGET_NAME], test_size=0.25, random_state=42) #random state to make the result reproducible
 
 
 myImputer = SimpleImputer(missing_values = pd.NA, strategy='mean')

@@ -34,7 +34,7 @@ class DimReduction(enum.Enum):
 
 TARGET_NAME = 'xrd'                                         # target column name
 PRESERVE_LIST = []
-ALWAYS_DROP_LIST = ['cashflow_v', 'market_value', 'yield', 'return_volatility', 'stock_price']
+ALWAYS_DROP_LIST = ['cashflow_v', 'market_value', 'yield', 'return_volatility', 'stock_price', 'GVKEY', 'sic']
 pathprefix = os.path.dirname(os.path.abspath(__file__))
 origin_path = None
 with open(os.path.join(pathprefix,'datapath'), 'r') as f:
@@ -81,7 +81,7 @@ origin['gvkey'] = s_gvkey
 hashed_features = hasher.transform(origin['gvkey'].astype('string').apply(lambda x: [x]))
 hashed_df = pd.DataFrame(hashed_features.toarray(), columns=[f'gvkey_hash_{i}' for i in range(hashed_features.shape[1])])
 origin = pd.concat([origin, hashed_df], axis=1)
-origin.drop('gvkey', axis=1, inplace=True)
+#origin.drop('gvkey', axis=1, inplace=True)
 
 # datetime641: datadate
 base_date = pd.Timestamp('1987-01-01')
@@ -106,18 +106,35 @@ if TARGET_NAME not in origin.columns:
     origin = pd.concat([origin, target_col], axis=1) # always preserve target column
 
 # devide prediction set and train_test set as early as possible
-prediction_set = origin[origin[TARGET_NAME].isnull()]
-#train_set = pd.concat([origin, prediction_set]).drop_duplicates(keep=False)
-train_test_set = origin[origin[TARGET_NAME].notnull()]
 
-if _DEBUG_FALSE:
-    prediction_set.info()
-    train_test_set.info()
-    prediction_set.to_csv(os.path.join(pathprefix,'temp1','pred.csv'), index=False)
-    prediction_set.describe().to_csv(os.path.join(pathprefix,'temp1','pred_describe.csv'))
-    train_test_set.to_csv(os.path.join(pathprefix,'temp1','train.csv'), index=False)
-    train_test_set.describe().to_csv(os.path.join(pathprefix,'temp1','train_describe.csv'))
-    exit(0)  
+prediction_set = origin[origin[TARGET_NAME].isnull()]
+prediction_set.drop('gvkey', axis=1, inplace=True)
+
+filtered_indices = []
+def find_non_empty_key2(group: pd.DataFrame) -> None:
+    global filtered_indices
+    preceedingNa = False
+    for index, row in group.iterrows():
+        if pd.notna(row[TARGET_NAME]):
+            if preceedingNa:
+                filtered_indices.append(index)
+            preceedingNa = False
+        else:
+            preceedingNa = True
+
+origin.groupby('gvkey').apply(find_non_empty_key2, include_groups=False)
+
+test_set = origin.loc[filtered_indices].copy().drop('gvkey', axis=1, errors='ignore')
+train_set = origin.drop(filtered_indices).copy()
+train_set.drop('gvkey', axis=1, inplace=True, errors='ignore')
+train_set = train_set[train_set[TARGET_NAME].notnull()]
+
+
+X_train = train_set.drop(columns=[TARGET_NAME])
+y_train = train_set[TARGET_NAME]
+X_test = test_set.drop(columns=[TARGET_NAME])
+y_test = test_set[TARGET_NAME]
+
 
 '''
 # standardize the data, process 400k samples together
@@ -131,7 +148,7 @@ else:
     pass
 '''
 for i in range(1, 6):
-    X_train, X_test, y_train, y_test = train_test_split(train_test_set.drop(columns=[TARGET_NAME]), train_test_set[TARGET_NAME], test_size=0.18, random_state=None) #random state to make the result reproducible
+    #X_train, X_test, y_train, y_test = train_test_split(train_test_set.drop(columns=[TARGET_NAME]), train_test_set[TARGET_NAME], test_size=0.08, random_state=None) #random state to make the result reproducible
 
     the_pipe = Pipeline([
         ('imputer', SimpleImputer(missing_values = pd.NA)),
