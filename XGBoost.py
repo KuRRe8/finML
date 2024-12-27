@@ -154,6 +154,17 @@ else:
     pass
 '''
 
+def custom_objective1(y_true, y_pred):
+    y_pred = np.maximum(0, y_pred) 
+    grad = y_pred - y_true
+    hess = np.ones_like(y_true)
+    return grad, hess
+
+def custom_objective(y_true, y_pred):
+    grad = np.where(y_pred < 0, 2 * (y_pred - y_true) * 2, 2 * (y_pred - y_true))
+    hess = np.where(y_pred < 0, 4, 2)
+    return grad, hess
+
 for i in range(1, 2):
     X_train, X_test, y_train, y_test = train_test_split(train_test_set.drop(columns=[TARGET_NAME]), train_test_set[TARGET_NAME], test_size=0.08, random_state=None) #random state to make the result reproducible
 
@@ -163,7 +174,7 @@ for i in range(1, 2):
     the_pipe = Pipeline([
         ('imputer', SimpleImputer(missing_values = pd.NA)),
         ('scaler', preprocessing.StandardScaler()),
-        ('estimator', XGBRegressor(tree_method='hist', device='cuda')) 
+        ('estimator', XGBRegressor(tree_method='hist', device='cuda', objective=custom_objective)) 
     ])
 
     kf = KFold(n_splits=15, shuffle=True, random_state=None)
@@ -171,7 +182,10 @@ for i in range(1, 2):
 
     param_grid = {
         'imputer__strategy': ['mean'],
-        'estimator__n_estimators': [50, 60, 70, 80, 90, 100],
+        'estimator__n_estimators': [50, 170],
+        'estimator__max_depth': [3, 11],
+        'estimator__learning_rate': [0.01, 0.3],
+        'estimator__subsample': [0.5, 1]
     }
 
 
