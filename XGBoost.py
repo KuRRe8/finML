@@ -77,7 +77,7 @@ if _DEBUG_FALSE:
 
 # now we have much smaller dataset, 1 datetime and 19 object need to be processed
 # object1: gvkey
-s_gvkey = origin['gvkey']
+s_gvkey = origin['gvkey'].copy()
 hasher = sklearn.feature_extraction.FeatureHasher(n_features=2**3, input_type='string') 
 s_gvkey = s_gvkey.astype('category')
 origin['gvkey'] = s_gvkey
@@ -203,3 +203,9 @@ for i in range(1, 6):
 
     prediction_set[TARGET_NAME].to_csv(os.path.join(pathprefix,'out',f'{METHODNAME}.csv'), index=False)
     ##prediction_set.to_csv('out\\XGBRegressor.csv', index=False)
+    #prediction_set[TARGET_NAME].to_csv(os.path.join(pathprefix,'out',f'{METHODNAME}.csv'), index=False)
+    prediction_set.to_csv(os.path.join(pathprefix,'out',f'{METHODNAME}.csv'), index=False)
+
+    origin = pd.concat([origin, s_gvkey], axis=1)
+    origin.loc[origin[TARGET_NAME].isnull(), TARGET_NAME] = prediction_set[TARGET_NAME]
+    origin.to_csv(os.path.join(pathprefix,'out',f'{METHODNAME}_full.csv'), index=False)
