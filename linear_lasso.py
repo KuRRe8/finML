@@ -74,7 +74,7 @@ if _DEBUG_FALSE:
 
 # now we have much smaller dataset, 1 datetime and 19 object need to be processed
 # object1: gvkey
-s_gvkey = origin['gvkey']
+s_gvkey = origin['gvkey'].copy()
 hasher = sklearn.feature_extraction.FeatureHasher(n_features=2**3, input_type='string') 
 s_gvkey = s_gvkey.astype('category')
 origin['gvkey'] = s_gvkey
@@ -148,7 +148,7 @@ else:
     pass
 '''
 
-for i in range(1, 6):
+for i in range(1, 2):
     #X_train, X_test, y_train, y_test = train_test_split(train_test_set.drop(columns=[TARGET_NAME]), train_test_set[TARGET_NAME], test_size=0.25, random_state=None) #random state to make the result reproducible
 
     the_pipe = Pipeline([
@@ -189,5 +189,8 @@ for i in range(1, 6):
 
     prediction_set.loc[:,TARGET_NAME] = grid_search.predict(prediction_set.drop(columns=[TARGET_NAME]))
 
-    prediction_set[TARGET_NAME].to_csv(os.path.join(pathprefix,'out',f'{METHODNAME}.csv'), index=False)
-    ##prediction_set.to_csv('out\\linear_lasso_all.csv', index=False)
+    prediction_set.to_csv(os.path.join(pathprefix,'out',f'{METHODNAME}.csv'), index=False)
+
+    origin = pd.concat([origin, s_gvkey], axis=1)
+    origin.loc[origin[TARGET_NAME].isnull(), TARGET_NAME] = prediction_set[TARGET_NAME]
+    origin.to_csv(os.path.join(pathprefix,'out',f'{METHODNAME}_full.csv'), index=False)

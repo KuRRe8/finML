@@ -92,7 +92,7 @@ if _DEBUG_FALSE:
 
 # now we have much smaller dataset, 1 datetime and 19 object need to be processed
 # object1: gvkey 
-s_gvkey = origin['gvkey']
+s_gvkey = origin['gvkey'].copy()
 #hasher = sklearn.feature_extraction.FeatureHasher(n_features=2**18, input_type='string') #use 256K hash space for 37.4K distinct gvkey
 s_gvkey = s_gvkey.astype('int64')
 origin['gvkey'] = s_gvkey
@@ -289,4 +289,8 @@ with torch.no_grad():
     logger.info(f'Adjusted R2: {ajusted_r2}')
     prediction_set.loc[:,TARGET_NAME] = tab_resnet(prediction_set_processed_tensor).cpu().numpy()
 
-    prediction_set[TARGET_NAME].to_csv(os.path.join(pathprefix,'out',f'{METHODNAME}.csv'), index=False)
+    prediction_set.to_csv(os.path.join(pathprefix,'out',f'{METHODNAME}.csv'), index=False)
+
+    origin = pd.concat([origin, s_gvkey], axis=1)
+    origin.loc[origin[TARGET_NAME].isnull(), TARGET_NAME] = prediction_set[TARGET_NAME]
+    origin.to_csv(os.path.join(pathprefix,'out',f'{METHODNAME}_full.csv'), index=False)

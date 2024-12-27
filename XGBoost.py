@@ -111,6 +111,7 @@ if TARGET_NAME not in origin.columns:
 # devide prediction set and train_test set as early as possible
 
 prediction_set = origin[origin[TARGET_NAME].isnull()]
+prediction_set_gvkey = prediction_set['gvkey'].copy()
 prediction_set.drop('gvkey', axis=1, inplace=True)
 
 filtered_indices_first = [] # only preserve the first sudden report
@@ -154,7 +155,7 @@ else:
     pass
 '''
 
-for i in range(1, 6):
+for i in range(1, 2):
     #X_train, X_test, y_train, y_test = train_test_split(train_test_set.drop(columns=[TARGET_NAME]), train_test_set[TARGET_NAME], test_size=0.08, random_state=None) #random state to make the result reproducible
 
     #dtrain = DMatrix(X_train, label=y_train)
@@ -201,9 +202,9 @@ for i in range(1, 6):
 
     prediction_set.loc[:,TARGET_NAME] = grid_search.predict(prediction_set.drop(columns=[TARGET_NAME]))
 
-    prediction_set[TARGET_NAME].to_csv(os.path.join(pathprefix,'out',f'{METHODNAME}.csv'), index=False)
-    ##prediction_set.to_csv('out\\XGBRegressor.csv', index=False)
     #prediction_set[TARGET_NAME].to_csv(os.path.join(pathprefix,'out',f'{METHODNAME}.csv'), index=False)
+    
+    #prediction_set['gvkey'] = prediction_set_gvkey
     prediction_set.to_csv(os.path.join(pathprefix,'out',f'{METHODNAME}.csv'), index=False)
 
     origin = pd.concat([origin, s_gvkey], axis=1)

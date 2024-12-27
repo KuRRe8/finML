@@ -235,3 +235,10 @@
 2024-12-26 22:47:00,557 - INFO - Sudden report test dataset R2 is---: 0.27143476077833706
 2024-12-26 22:47:00,557 - INFO - Sudden report test dataset RMSE is---: 159.49896069981918
 2024-12-26 22:47:00,557 - INFO - Sudden report test dataset Adjusted R2 is---: 0.2605892186883474
+2024-12-27 18:07:01,397 - INFO - Started.
+2024-12-27 18:07:06,323 - INFO - Data loaded from /home/users/ntu/yang0886/scratch/Dec2024/CPfactors2.csv
+2024-12-27 18:09:28,591 - INFO - Best params: {'estimator__n_estimators': 100, 'imputer__strategy': 'mean'}
+2024-12-27 18:09:28,592 - INFO - Best cross-validated R2: 0.8604486105524957
+2024-12-27 18:09:28,605 - INFO - R2 score on test set: -0.9715019925533703
+2024-12-27 18:09:28,605 - INFO - RMSE on test set: 203.264370642976
+2024-12-27 18:09:28,605 - INFO - Adjusted R2 score on test set: -1.014360731521922
