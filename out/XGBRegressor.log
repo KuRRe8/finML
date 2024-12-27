@@ -251,3 +251,10 @@
 2024-12-27 21:31:10,015 - INFO - R2 score on test set: 0.8888978256057949
 2024-12-27 21:31:10,016 - INFO - RMSE on test set: 255.2722562805526
 2024-12-27 21:31:10,058 - INFO - Adjusted R2 score on test set: 0.8885189035544956
+2024-12-27 22:24:14,786 - INFO - Started.
+2024-12-27 22:24:15,427 - INFO - Data loaded from /home/users/ntu/yang0886/scratch/Dec2024/CPfactors3.csv
+2024-12-27 22:25:37,859 - INFO - Best params: {'estimator__n_estimators': 100, 'imputer__strategy': 'mean'}
+2024-12-27 22:25:37,859 - INFO - Best cross-validated R2: 0.8876929967394461
+2024-12-27 22:25:37,874 - INFO - R2 score on test set: 0.9084758804768159
+2024-12-27 22:25:37,874 - INFO - RMSE on test set: 289.53016207077184
+2024-12-27 22:25:37,874 - INFO - Adjusted R2 score on test set: 0.9082930981030405
