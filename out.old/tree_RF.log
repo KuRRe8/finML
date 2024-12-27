@@ -1,5 +1,0 @@
-2024-10-05 03:17:10,406 - INFO - Started.
-2024-10-05 04:03:36,154 - INFO - Best params: {'estimator__max_depth': 10, 'estimator__min_samples_leaf': 10, 'estimator__min_samples_split': 20, 'estimator__n_estimators': 100, 'imputer__strategy': 'mean'}
-2024-10-05 04:03:36,154 - INFO - Best cross-validated R2: 0.8093854949366157
-2024-10-05 04:03:36,607 - INFO - R2 score on test set: 0.7878334812802475
-2024-10-05 04:03:36,607 - INFO - RMSE on test set: 400.0250812707528

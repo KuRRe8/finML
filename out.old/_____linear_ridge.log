@@ -1,4 +1,0 @@
-2024-10-07 18:01:53,469 - INFO - Started.
-2024-10-07 18:12:04,400 - INFO - Best alpha: {'estimator__alpha': 0.1, 'estimator__fit_intercept': True, 'estimator__positive': False, 'imputer__strategy': 'mean'}
-2024-10-07 18:12:04,400 - INFO - Best cross-validated RMSE: 343.5403437163899
-2024-10-07 18:12:04,736 - INFO - R2 score on test set: -0.05456234404920046
