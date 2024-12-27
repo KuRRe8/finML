@@ -20,3 +20,9 @@
 2024-12-27 17:25:02,631 - INFO - Data loaded from /home/users/ntu/yang0886/scratch/Dec2024/CPfactors2.csv
 2024-12-27 17:25:09,824 - INFO - R2 score on test set: -0.30156759327813476
 2024-12-27 17:25:09,824 - INFO - RMSE on test set: 213.18517367102382
+2024-12-27 21:13:34,726 - INFO - Started.
+2024-12-27 21:13:35,285 - INFO - Data loaded from /home/users/ntu/yang0886/scratch/Dec2024/CPfactors2.csv
+2024-12-27 21:41:57,278 - INFO - Started.
+2024-12-27 21:41:57,852 - INFO - Data loaded from /home/users/ntu/yang0886/scratch/Dec2024/CPfactors2.csv
+2024-12-27 21:41:58,728 - INFO - R2 score on test set: 0.24182912594202854
+2024-12-27 21:41:58,728 - INFO - RMSE on test set: 761.701358714718

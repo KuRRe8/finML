@@ -122,7 +122,9 @@ if TARGET_NAME not in origin.columns:
 # devide prediction set and train_test set as early as possible
 
 prediction_set = origin[origin[TARGET_NAME].isnull()]
+train_test_set = origin[origin[TARGET_NAME].notnull()]
 
+'''
 filtered_indices = []
 def find_non_empty_key2(group: pd.DataFrame) -> None:
     global filtered_indices
@@ -137,8 +139,9 @@ def find_non_empty_key2(group: pd.DataFrame) -> None:
 
 origin.groupby('gvkey').apply(find_non_empty_key2, include_groups=False)
 
-test_set = origin.loc[filtered_indices].copy()
+test_set = origin.loc[filtered_indices].copy().drop('gvkey', axis=1, errors='ignore')
 train_set = origin.drop(filtered_indices).copy()
+train_set.drop('gvkey', axis=1, inplace=True, errors='ignore')
 train_set = train_set[train_set[TARGET_NAME].notnull()]
 
 
@@ -146,6 +149,7 @@ X_train = train_set.drop(columns=[TARGET_NAME])
 y_train = train_set[TARGET_NAME]
 X_test = test_set.drop(columns=[TARGET_NAME])
 y_test = test_set[TARGET_NAME]
+'''
 
 '''
 # standardize the data, process 400k samples together
@@ -208,7 +212,7 @@ class EarlyStopping:
         torch.save(model.state_dict(), self.path)
         self.val_loss_min = val_loss
 
-#X_train, X_test, y_train, y_test = train_test_split(train_test_set.drop(columns=[TARGET_NAME]), train_test_set[TARGET_NAME], test_size=0.25, random_state=42) #random state to make the result reproducible
+X_train, X_test, y_train, y_test = train_test_split(train_test_set.drop(columns=[TARGET_NAME]), train_test_set[TARGET_NAME], test_size=0.25, random_state=42) #random state to make the result reproducible
 
 
 myImputer = SimpleImputer(missing_values = pd.NA, strategy='mean')

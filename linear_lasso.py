@@ -109,7 +109,10 @@ if TARGET_NAME not in origin.columns:
 
 prediction_set = origin[origin[TARGET_NAME].isnull()]
 prediction_set.drop('gvkey', axis=1, inplace=True)
+train_test_set = origin[origin[TARGET_NAME].notnull()]
+train_test_set.drop('gvkey', axis=1, inplace=True)
 
+'''
 filtered_indices = []
 def find_non_empty_key2(group: pd.DataFrame) -> None:
     global filtered_indices
@@ -134,6 +137,7 @@ X_train = train_set.drop(columns=[TARGET_NAME])
 y_train = train_set[TARGET_NAME]
 X_test = test_set.drop(columns=[TARGET_NAME])
 y_test = test_set[TARGET_NAME]
+'''
 
 
 '''
@@ -149,7 +153,7 @@ else:
 '''
 
 for i in range(1, 2):
-    #X_train, X_test, y_train, y_test = train_test_split(train_test_set.drop(columns=[TARGET_NAME]), train_test_set[TARGET_NAME], test_size=0.25, random_state=None) #random state to make the result reproducible
+    X_train, X_test, y_train, y_test = train_test_split(train_test_set.drop(columns=[TARGET_NAME]), train_test_set[TARGET_NAME], test_size=0.25, random_state=None) #random state to make the result reproducible
 
     the_pipe = Pipeline([
         ('imputer', SimpleImputer(missing_values = pd.NA)),

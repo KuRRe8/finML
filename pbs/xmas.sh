@@ -21,4 +21,5 @@ python linear_lasso.py
 python linear_ridge.py
 python neural_MLP.py
 python tree_RF.py
+python OLS.py
 #python XGBoost.py

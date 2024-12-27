@@ -1,0 +1,17 @@
+#!/bin/sh
+# Below, is the queue
+#PBS -q normal
+#PBS -j oe
+# Number of cores
+#PBS -l select=1:ncpus=1:mem=15G
+#PBS -l walltime=1:00:00
+#PBS -N finML_plotting
+# Start of commands
+
+echo thisssssssssssssssssssssssssssssssss is the start of PBS script
+
+module load miniforge3
+conda activate deep
+cd ~/proj/finML
+
+python plotting.py

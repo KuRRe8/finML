@@ -111,29 +111,27 @@ if TARGET_NAME not in origin.columns:
 # devide prediction set and train_test set as early as possible
 
 prediction_set = origin[origin[TARGET_NAME].isnull()]
-prediction_set_gvkey = prediction_set['gvkey'].copy()
 prediction_set.drop('gvkey', axis=1, inplace=True)
+train_test_set = origin[origin[TARGET_NAME].notnull()]
+train_test_set.drop('gvkey', axis=1, inplace=True)
 
-filtered_indices_first = [] # only preserve the first sudden report
-pending_delete_gvkey = []
+'''
+filtered_indices = []
 def find_non_empty_key2(group: pd.DataFrame) -> None:
-    global filtered_indices_first
-    global pending_delete_gvkey
+    global filtered_indices
     preceedingNa = False
     for index, row in group.iterrows():
         if pd.notna(row[TARGET_NAME]):
             if preceedingNa:
-                filtered_indices_first.append(index)
-                pending_delete_gvkey.append(row['gvkey'])
+                filtered_indices.append(index)
             preceedingNa = False
-            return None
         else:
             preceedingNa = True
 
-origin.groupby('gvkey').apply(find_non_empty_key2, include_groups=True)
+origin.groupby('gvkey').apply(find_non_empty_key2, include_groups=False)
 
-test_set = origin.loc[filtered_indices_first].copy().drop('gvkey', axis=1, errors='ignore')
-train_set = origin[~origin['gvkey'].isin(pending_delete_gvkey)].copy()
+test_set = origin.loc[filtered_indices].copy().drop('gvkey', axis=1, errors='ignore')
+train_set = origin.drop(filtered_indices).copy()
 train_set.drop('gvkey', axis=1, inplace=True, errors='ignore')
 train_set = train_set[train_set[TARGET_NAME].notnull()]
 
@@ -142,6 +140,7 @@ X_train = train_set.drop(columns=[TARGET_NAME])
 y_train = train_set[TARGET_NAME]
 X_test = test_set.drop(columns=[TARGET_NAME])
 y_test = test_set[TARGET_NAME]
+'''
 
 '''
 # standardize the data, process 400k samples together
@@ -156,7 +155,7 @@ else:
 '''
 
 for i in range(1, 2):
-    #X_train, X_test, y_train, y_test = train_test_split(train_test_set.drop(columns=[TARGET_NAME]), train_test_set[TARGET_NAME], test_size=0.08, random_state=None) #random state to make the result reproducible
+    X_train, X_test, y_train, y_test = train_test_split(train_test_set.drop(columns=[TARGET_NAME]), train_test_set[TARGET_NAME], test_size=0.08, random_state=None) #random state to make the result reproducible
 
     #dtrain = DMatrix(X_train, label=y_train)
     #dtest = DMatrix(X_test, label=y_test)
