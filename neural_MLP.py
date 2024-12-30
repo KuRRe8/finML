@@ -114,7 +114,7 @@ prediction_set.drop('gvkey', axis=1, inplace=True)
 train_test_set = origin[origin[TARGET_NAME].notnull()]
 train_test_set.drop('gvkey', axis=1, inplace=True)
 
-'''
+
 filtered_indices = []
 def find_non_empty_key2(group: pd.DataFrame) -> None:
     global filtered_indices
@@ -139,7 +139,7 @@ X_train = train_set.drop(columns=[TARGET_NAME])
 y_train = train_set[TARGET_NAME]
 X_test = test_set.drop(columns=[TARGET_NAME])
 y_test = test_set[TARGET_NAME]
-'''
+
 
 
 '''
@@ -155,7 +155,7 @@ else:
 '''
 
 for i in range(1, 2):
-    X_train, X_test, y_train, y_test = train_test_split(train_test_set.drop(columns=[TARGET_NAME]), train_test_set[TARGET_NAME], test_size=0.08, random_state=None) #random state to make the result reproducible
+    #X_train, X_test, y_train, y_test = train_test_split(train_test_set.drop(columns=[TARGET_NAME]), train_test_set[TARGET_NAME], test_size=0.08, random_state=None) #random state to make the result reproducible
 
     the_pipe = Pipeline([
         ('imputer', SimpleImputer(missing_values = pd.NA)),
@@ -167,12 +167,13 @@ for i in range(1, 2):
 
 
     param_grid = {
-        'imputer__strategy': ['mean', 'median'],
-        'estimator__activation': ['tanh', 'relu', 'sigmoid'],
+        'imputer__strategy': ['median'],
+        'estimator__activation': [ 'relu', 'sigmoid'],
         'estimator__solver': ['sgd', 'adam'],
-        'estimator__alpha': [0.0001, 0.001, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5],
+        'estimator__alpha': [0.001, 0.05, 0.1, 0.5],
         'estimator__learning_rate': ['adaptive'],
-        'estimator__verbose': [True]
+        'estimator__verbose': [False],
+        'estimator__max_iter': [1000]
 
     }
 

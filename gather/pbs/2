@@ -1,0 +1,19 @@
+#!/bin/sh
+# Below, is the queue
+#PBS -q normal
+#PBS -j oe
+# Number of cores
+#PBS -l select=1:ncpus=127:mem=991G
+#PBS -l walltime=0:30:00
+#PBS -M yang0886@e.ntu.edu.sg
+#PBS -m abe
+#PBS -N finML_gather222
+# Start of commands
+
+echo thisssssssssssssssssssssssssssssssss is the start of PBS script
+
+module load miniforge3
+conda activate deep
+cd ~/proj/finML/gather
+
+python gather.py 2

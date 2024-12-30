@@ -123,3 +123,17 @@
 2024-12-27 22:19:29,108 - INFO - R2 score on test set: 0.6293505528439391
 2024-12-27 22:19:29,108 - INFO - RMSE on test set: 524.5285171633792
 2024-12-27 22:19:29,108 - INFO - Adjusted R2 score on test set: 0.6286103306364743
+2024-12-28 12:43:03,143 - INFO - Started.
+2024-12-28 12:43:07,327 - INFO - Data loaded from /home/users/ntu/yang0886/scratch/Dec2024/CPfactors3.csv
+2024-12-28 12:53:19,505 - INFO - Best params: {'estimator__activation': 'relu', 'estimator__alpha': 0.1, 'estimator__learning_rate': 'adaptive', 'estimator__max_iter': 1000, 'estimator__solver': 'adam', 'estimator__verbose': False, 'imputer__strategy': 'median'}
+2024-12-28 12:53:19,505 - INFO - Best cross-validated R2: 0.7578481290298329
+2024-12-28 12:53:19,516 - INFO - R2 score on test set: 0.8418139400390421
+2024-12-28 12:53:19,516 - INFO - RMSE on test set: 273.64300878576023
+2024-12-28 12:53:19,516 - INFO - Adjusted R2 score on test set: 0.8414980274283721
+2024-12-28 13:12:25,570 - INFO - Started.
+2024-12-28 13:12:26,007 - INFO - Data loaded from /home/users/ntu/yang0886/scratch/Dec2024/CPfactors3.csv
+2024-12-28 13:23:25,645 - INFO - Best params: {'estimator__activation': 'relu', 'estimator__alpha': 0.001, 'estimator__learning_rate': 'adaptive', 'estimator__max_iter': 1000, 'estimator__solver': 'adam', 'estimator__verbose': False, 'imputer__strategy': 'median'}
+2024-12-28 13:23:25,646 - INFO - Best cross-validated R2: 0.7825065031332326
+2024-12-28 13:23:25,651 - INFO - R2 score on test set: -0.3687402375695472
+2024-12-28 13:23:25,651 - INFO - RMSE on test set: 156.9833211068349
+2024-12-28 13:23:25,651 - INFO - Adjusted R2 score on test set: -0.3795331713424972
