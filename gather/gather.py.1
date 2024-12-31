@@ -1,3 +1,7 @@
+# use imputer, random testset including sudden report samples
+
+
+
 # 1 - lasso
 # 2 - ridge
 # 3 - OLS
@@ -13,8 +17,6 @@ if len(sys.argv) < 2:
 
 # Convert input arguments to a list of integers
 tasks = list(map(int, sys.argv[1:]))
-TASK_NAME_DICT = {1: 'lasso', 2: 'ridge', 3: 'OLS', 4: 'MLP', 5: 'RF', 6: 'XGB'}
-TASK_PREDICTION_DICT = {1: False, 2: False, 3: True, 4: False, 5: False, 6: True}
 
 # Validate the tasks
 if not all(1 <= task <= 6 for task in tasks):
@@ -29,10 +31,8 @@ UNIQUE_THRESHOLD = 1                                      # for each feature, at
 FEATURE_SELECTION_RATIO = 0.999                               # for each feature, those process less than this ratio of values will be removed 0.7*400k=280k
 
 TARGET_NAME_COLS = ['xrd', 'logxrd', 'xrdat', 'xrdppe', 'xrdrank']
-TARGET_NAME_DICT = {i: TARGET_NAME_COLS[i-1] for i in range(1, 6)}
 PRESERVE_LIST = []
 ALWAYS_DROP_LIST = ['cashflow_v', 'market_value', 'yield', 'return_volatility', 'stock_price', 'GVKEY', 'sic']
-ALWAYS_DROP_LIST = ['GVKEY', 'sic']
 
 
 _DEBUG = True                                               # 
@@ -79,31 +79,12 @@ with open(os.path.join(pathprefix,'..','datapath'), 'r') as f:
 
 logger = logging.getLogger()
 log_filename = f"gather_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log"
-out_filename = f"gather_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
 filehandler = logging.FileHandler(os.path.join(pathprefix, 'out', log_filename))
 filehandler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
 logger.addHandler(filehandler)
 logger.setLevel(logging.DEBUG)
 
 logger.info('Started.')
-
-out_statistic_cols = ['cur_task', 'all_tasks']
-for key, value in TARGET_NAME_DICT.items():
-    out_statistic_cols.append(f'{value}_full_r2')
-    out_statistic_cols.append(f'{value}_full_rmse')
-    out_statistic_cols.append(f'{value}_full_adjusted_r2')
-    out_statistic_cols.append(f'{value}_sub_r2')
-    out_statistic_cols.append(f'{value}_sub_rmse')
-    out_statistic_cols.append(f'{value}_sub_adjusted_r2')
-
-out_statistic_cols.append('comment')
-
-out_statistic = pd.DataFrame(columns=out_statistic_cols)
-
-
-#empty_row = pd.DataFrame([[None] * len(out_statistic.columns)], columns=out_statistic.columns)
-
-#out_statistic = pd.concat([out_statistic, empty_row], ignore_index=True)
 
 """
 Step 1: Data Cleaning
@@ -143,8 +124,7 @@ origin = pd.concat([origin, hashed_df], axis=1)
 
 # datetime641: datadate
 base_date = pd.Timestamp('1987-01-01')
-if 'datadate' in origin.columns:
-    origin['datadate'] = (pd.to_datetime(origin['datadate']) - base_date).dt.days
+origin['datadate'] = (pd.to_datetime(origin['datadate']) - base_date).dt.days
 
 
 
@@ -171,16 +151,11 @@ y_test_sub = []
 X_test = []
 y_test = []
 
-prediction_set_X_list = [] # considering 5 target columns, each task use identical prediction set
-prediction_set_y_list = [] # considering 5 target columns
-
 for ind in range(len(TARGET_NAME_COLS)):
     print(f'Processing {TARGET_NAME_COLS[ind]}')
-    prediction_set_Xy = origin[origin[TARGET_NAME_COLS[ind]].isnull()].copy().drop('gvkey', axis=1, errors='ignore')
-    prediction_set_X_list.append(prediction_set_Xy.drop(columns=TARGET_NAME_COLS).copy())
-    prediction_set_y_list.append(prediction_set_Xy[TARGET_NAME_COLS[ind]].copy())
+    #prediction_set = origin[origin[TARGET_NAME_COLS[ind]].isnull()]
 
-    train_test_set = origin[origin[TARGET_NAME_COLS[ind]].notnull()]
+    train_test_set = origin[origin[TARGET_NAME_COLS[ind]].notnull()].copy()
 
 
     filtered_indices = []
@@ -199,18 +174,19 @@ for ind in range(len(TARGET_NAME_COLS)):
 
     subsample_test_set = origin.loc[filtered_indices].copy().drop('gvkey', axis=1, errors='ignore')
     subsample_test_set.dropna(inplace=True)
-    fullsample_test_set = train_test_set[train_test_set['fyear'] > 2011].copy()
-    fullsample_test_set.drop('gvkey', axis=1, inplace=True, errors='ignore')
-    train_set = train_test_set[train_test_set['fyear'] < 2012].copy()
-    train_set.drop('gvkey', axis=1, inplace=True, errors='ignore')
+    train_test_set.drop(filtered_indices, inplace=True) # remove the sudden report samples from train_test_set
+    train_test_set.drop('gvkey', axis=1, inplace=True, errors='ignore')
+    
+    _X_train, _X_test, _y_train, _y_test = train_test_split(train_test_set.drop(columns=TARGET_NAME_COLS), train_test_set[TARGET_NAME_COLS[ind]], test_size=0.08, random_state=None) #random state to make the result reproducible
 
-    X_train.append(train_set.drop(columns=TARGET_NAME_COLS))
-    y_train.append(train_set[TARGET_NAME_COLS[ind]]) # target_cols is a list of 5 columns
+
+
+    X_train.append(_X_train)
+    y_train.append(_y_train) # target_cols is a list of 5 columns
     X_test_sub.append(subsample_test_set.drop(columns=TARGET_NAME_COLS))
     y_test_sub.append(subsample_test_set[TARGET_NAME_COLS[ind]])
-    X_test.append(fullsample_test_set.drop(columns=TARGET_NAME_COLS))
-    y_test.append(fullsample_test_set[TARGET_NAME_COLS[ind]])
-
+    X_test.append(_X_test)
+    y_test.append(_y_test)
 
 logger.info('Data cleaning finished.')
 
@@ -227,11 +203,6 @@ Step 2: Training
 
 for task in tasks:
 
-    new_row = {col: None for col in out_statistic_cols}
-    new_row['cur_task'] = TASK_NAME_DICT[task]
-    new_row['all_tasks'] = str(tasks)
-    
-    new_row = pd.DataFrame([new_row], columns=out_statistic_cols)
     if task == 1: #lasso
         for ind in range(len(TARGET_NAME_COLS)):
             logger.info(f"Task {task} for {TARGET_NAME_COLS[ind]}")
@@ -274,9 +245,6 @@ for task in tasks:
 
             logger.info(f"Adjusted R2 score on test set: {adjusted_r2}")
 
-            new_row[f'{TARGET_NAME_COLS[ind]}_full_r2'] = r2
-            new_row[f'{TARGET_NAME_COLS[ind]}_full_rmse'] = rmse
-            new_row[f'{TARGET_NAME_COLS[ind]}_full_adjusted_r2'] = adjusted_r2
 
             y_pred = best_model.predict(X_test_sub[ind])
 
@@ -289,20 +257,13 @@ for task in tasks:
             logger.info(f"RMSE on sudden report subsamples test set: {rmse}")
             logger.info(f"Adjusted R2 score on sudden report subsamples test set: {adjusted_r2}")
 
-            new_row[f'{TARGET_NAME_COLS[ind]}_sub_r2'] = r2
-            new_row[f'{TARGET_NAME_COLS[ind]}_sub_rmse'] = rmse
-            new_row[f'{TARGET_NAME_COLS[ind]}_sub_adjusted_r2'] = adjusted_r2
-            if TASK_PREDICTION_DICT[task] :
-                y_pred = best_model.predict(prediction_set_X_list[ind])
-                prediction_set_y_list[ind] = y_pred
+            #prediction_set.loc[:,TARGET_NAME] = grid_search.predict(prediction_set.drop(columns=[TARGET_NAME]))
 
+            #prediction_set.to_csv(os.path.join(pathprefix,'out',f'{METHODNAME}.csv'), index=False)
 
-        out_statistic = pd.concat([out_statistic, new_row], ignore_index=True)
-        if TASK_PREDICTION_DICT[task]:
-            for iii in range(len(TARGET_NAME_COLS)):
-                prediction_set_y_list[iii] = pd.Series(prediction_set_y_list[iii], name=TARGET_NAME_COLS[iii])
-                origin.loc[origin[TARGET_NAME_COLS[iii]].isnull(), TARGET_NAME_COLS[iii]] = prediction_set_y_list[iii].astype(origin[TARGET_NAME_COLS[iii]].dtype)
-            origin.to_csv(os.path.join(pathprefix, 'out', f'{TASK_NAME_DICT[task]}_with_predictions.csv'), index=False)
+            #origin = pd.concat([origin, s_gvkey], axis=1)
+            #origin.loc[origin[TARGET_NAME].isnull(), TARGET_NAME] = prediction_set[TARGET_NAME]
+            #origin.to_csv(os.path.join(pathprefix,'out',f'{METHODNAME}_full.csv'), index=False)
     elif task == 2: #ridge
         for ind in range(len(TARGET_NAME_COLS)):
             logger.info(f"Task {task} for {TARGET_NAME_COLS[ind]}")
@@ -343,9 +304,6 @@ for task in tasks:
             logger.info(f"RMSE on test set: {rmse}")
             logger.info(f"Adjusted R2 score on test set: {adjusted_r2}")
 
-            new_row[f'{TARGET_NAME_COLS[ind]}_full_r2'] = r2
-            new_row[f'{TARGET_NAME_COLS[ind]}_full_rmse'] = rmse
-            new_row[f'{TARGET_NAME_COLS[ind]}_full_adjusted_r2'] = adjusted_r2
 
             y_pred = best_model.predict(X_test_sub[ind])
 
@@ -357,34 +315,22 @@ for task in tasks:
             logger.info(f"R2 score on sudden report subsamples test set: {r2}")
             logger.info(f"RMSE on sudden report subsamples test set: {rmse}")
             logger.info(f"Adjusted R2 score on sudden report subsamples test set: {adjusted_r2}")
-            new_row[f'{TARGET_NAME_COLS[ind]}_sub_r2'] = r2
-            new_row[f'{TARGET_NAME_COLS[ind]}_sub_rmse'] = rmse
-            new_row[f'{TARGET_NAME_COLS[ind]}_sub_adjusted_r2'] = adjusted_r2
-            if TASK_PREDICTION_DICT[task] :
-                y_pred = best_model.predict(prediction_set_X_list[ind])
-                prediction_set_y_list[ind] = y_pred
 
 
-        out_statistic = pd.concat([out_statistic, new_row], ignore_index=True)
-        if TASK_PREDICTION_DICT[task]:
-            for iii in range(len(TARGET_NAME_COLS)):
-                prediction_set_y_list[iii] = pd.Series(prediction_set_y_list[iii], name=TARGET_NAME_COLS[iii])
-                origin.loc[origin[TARGET_NAME_COLS[iii]].isnull(), TARGET_NAME_COLS[iii]] = prediction_set_y_list[iii].astype(origin[TARGET_NAME_COLS[iii]].dtype)
-            origin.to_csv(os.path.join(pathprefix, 'out', f'{TASK_NAME_DICT[task]}_with_predictions.csv'), index=False)    
     elif task == 3: #OLS
         for ind in range(len(TARGET_NAME_COLS)):
             logger.info(f"Task {task} for {TARGET_NAME_COLS[ind]}")
             imputer = SimpleImputer(strategy='median')
             scaler = preprocessing.StandardScaler()
-            best_model = LinearRegression(positive=True)
+            estimator = LinearRegression(positive=True)
 
             X_train[ind] = imputer.fit_transform(X_train[ind])
             X_train[ind] = scaler.fit_transform(X_train[ind])
-            best_model.fit(X_train[ind], y_train[ind])
+            estimator.fit(X_train[ind], y_train[ind])
 
             X_test[ind] = imputer.transform(X_test[ind])
             X_test[ind] = scaler.transform(X_test[ind])
-            y_pred = best_model.predict(X_test[ind])
+            y_pred = estimator.predict(X_test[ind])
 
             r2 = r2_score(y_test[ind], y_pred)
             rmse = sqrt(mean_squared_error(y_test[ind], y_pred))
@@ -395,11 +341,9 @@ for task in tasks:
             adjusted_r2 = 1 - ((1 - r2) * (n - 1) / (n - p - 1))
             logger.info(f"Adjusted R2 score on test set: {adjusted_r2}")
 
-            new_row[f'{TARGET_NAME_COLS[ind]}_full_r2'] = r2
-            new_row[f'{TARGET_NAME_COLS[ind]}_full_rmse'] = rmse
-            new_row[f'{TARGET_NAME_COLS[ind]}_full_adjusted_r2'] = adjusted_r2
 
-            y_pred = best_model.predict(X_test_sub[ind])
+
+            y_pred = estimator.predict(X_test_sub[ind])
 
             n = X_test_sub[ind].shape[0]  # number of samples
             p = X_test_sub[ind].shape[1]
@@ -410,20 +354,9 @@ for task in tasks:
             logger.info(f"RMSE on sudden report subsamples test set: {rmse}")
             logger.info(f"Adjusted R2 score on sudden report subsamples test set: {adjusted_r2}")
 
-            new_row[f'{TARGET_NAME_COLS[ind]}_sub_r2'] = r2
-            new_row[f'{TARGET_NAME_COLS[ind]}_sub_rmse'] = rmse
-            new_row[f'{TARGET_NAME_COLS[ind]}_sub_adjusted_r2'] = adjusted_r2
-            if TASK_PREDICTION_DICT[task] :
-                y_pred = best_model.predict(prediction_set_X_list[ind])
-                prediction_set_y_list[ind] = y_pred
 
 
-        out_statistic = pd.concat([out_statistic, new_row], ignore_index=True)
-        if TASK_PREDICTION_DICT[task]:
-            for iii in range(len(TARGET_NAME_COLS)):
-                prediction_set_y_list[iii] = pd.Series(prediction_set_y_list[iii], name=TARGET_NAME_COLS[iii])
-                origin.loc[origin[TARGET_NAME_COLS[iii]].isnull(), TARGET_NAME_COLS[iii]] = prediction_set_y_list[iii].astype(origin[TARGET_NAME_COLS[iii]].dtype)
-            origin.to_csv(os.path.join(pathprefix, 'out', f'{TASK_NAME_DICT[task]}_with_predictions.csv'), index=False)
+
     elif task == 4: #MLP
         for ind in range(len(TARGET_NAME_COLS)):
             logger.info(f"Task {task} for {TARGET_NAME_COLS[ind]}")
@@ -439,7 +372,7 @@ for task in tasks:
 
             param_grid = {
                 'imputer__strategy': ['median'],
-                'estimator__activation': [ 'relu', 'tanh'],
+                'estimator__activation': [ 'relu', 'sigmoid'],
                 'estimator__solver': ['sgd', 'adam'],
                 'estimator__alpha': [0.001, 0.05, 0.1, 0.5],
                 'estimator__learning_rate': ['adaptive'],
@@ -469,9 +402,7 @@ for task in tasks:
             logger.info(f"RMSE on test set: {rmse}")
             logger.info(f"Adjusted R2 score on test set: {adjusted_r2}")
 
-            new_row[f'{TARGET_NAME_COLS[ind]}_full_r2'] = r2
-            new_row[f'{TARGET_NAME_COLS[ind]}_full_rmse'] = rmse
-            new_row[f'{TARGET_NAME_COLS[ind]}_full_adjusted_r2'] = adjusted_r2
+
 
             y_pred = best_model.predict(X_test_sub[ind])
 
@@ -484,20 +415,7 @@ for task in tasks:
             logger.info(f"RMSE on sudden report subsamples test set: {rmse}")
             logger.info(f"Adjusted R2 score on sudden report subsamples test set: {adjusted_r2}")
 
-            new_row[f'{TARGET_NAME_COLS[ind]}_sub_r2'] = r2
-            new_row[f'{TARGET_NAME_COLS[ind]}_sub_rmse'] = rmse
-            new_row[f'{TARGET_NAME_COLS[ind]}_sub_adjusted_r2'] = adjusted_r2
-            if TASK_PREDICTION_DICT[task] :
-                y_pred = best_model.predict(prediction_set_X_list[ind])
-                prediction_set_y_list[ind] = y_pred
 
-
-        out_statistic = pd.concat([out_statistic, new_row], ignore_index=True)
-        if TASK_PREDICTION_DICT[task]:
-            for iii in range(len(TARGET_NAME_COLS)):
-                prediction_set_y_list[iii] = pd.Series(prediction_set_y_list[iii], name=TARGET_NAME_COLS[iii])
-                origin.loc[origin[TARGET_NAME_COLS[iii]].isnull(), TARGET_NAME_COLS[iii]] = prediction_set_y_list[iii].astype(origin[TARGET_NAME_COLS[iii]].dtype)
-            origin.to_csv(os.path.join(pathprefix, 'out', f'{TASK_NAME_DICT[task]}_with_predictions.csv'), index=False)    
     elif task == 5: #RF
         for ind in range(len(TARGET_NAME_COLS)):
             logger.info(f"Task {task} for {TARGET_NAME_COLS[ind]}")
@@ -541,9 +459,7 @@ for task in tasks:
             logger.info(f"RMSE on test set: {rmse}")
             logger.info(f"Adjusted R2 score on test set: {adjusted_r2}")
 
-            new_row[f'{TARGET_NAME_COLS[ind]}_full_r2'] = r2
-            new_row[f'{TARGET_NAME_COLS[ind]}_full_rmse'] = rmse
-            new_row[f'{TARGET_NAME_COLS[ind]}_full_adjusted_r2'] = adjusted_r2
+
 
             y_pred = best_model.predict(X_test_sub[ind])
 
@@ -555,20 +471,8 @@ for task in tasks:
             logger.info(f"R2 score on sudden report subsamples test set: {r2}")
             logger.info(f"RMSE on sudden report subsamples test set: {rmse}")
             logger.info(f"Adjusted R2 score on sudden report subsamples test set: {adjusted_r2}")
-            new_row[f'{TARGET_NAME_COLS[ind]}_sub_r2'] = r2
-            new_row[f'{TARGET_NAME_COLS[ind]}_sub_rmse'] = rmse
-            new_row[f'{TARGET_NAME_COLS[ind]}_sub_adjusted_r2'] = adjusted_r2
-            if TASK_PREDICTION_DICT[task] :
-                y_pred = best_model.predict(prediction_set_X_list[ind])
-                prediction_set_y_list[ind] = y_pred
 
 
-        out_statistic = pd.concat([out_statistic, new_row], ignore_index=True)
-        if TASK_PREDICTION_DICT[task]:
-            for iii in range(len(TARGET_NAME_COLS)):
-                prediction_set_y_list[iii] = pd.Series(prediction_set_y_list[iii], name=TARGET_NAME_COLS[iii])
-                origin.loc[origin[TARGET_NAME_COLS[iii]].isnull(), TARGET_NAME_COLS[iii]] = prediction_set_y_list[iii].astype(origin[TARGET_NAME_COLS[iii]].dtype)
-            origin.to_csv(os.path.join(pathprefix, 'out', f'{TASK_NAME_DICT[task]}_with_predictions.csv'), index=False)    
     elif task == 6: #XGB
         for ind in range(len(TARGET_NAME_COLS)):
             logger.info(f"Task {task} for {TARGET_NAME_COLS[ind]}")
@@ -617,9 +521,7 @@ for task in tasks:
             logger.info(f"RMSE on test set: {rmse}")
             logger.info(f"Adjusted R2 score on test set: {adjusted_r2}")
 
-            new_row[f'{TARGET_NAME_COLS[ind]}_full_r2'] = r2
-            new_row[f'{TARGET_NAME_COLS[ind]}_full_rmse'] = rmse
-            new_row[f'{TARGET_NAME_COLS[ind]}_full_adjusted_r2'] = adjusted_r2
+
 
             y_pred = best_model.predict(X_test_sub[ind])
 
@@ -632,20 +534,4 @@ for task in tasks:
             logger.info(f"RMSE on sudden report subsamples test set: {rmse}")
             logger.info(f"Adjusted R2 score on sudden report subsamples test set: {adjusted_r2}")
 
-            new_row[f'{TARGET_NAME_COLS[ind]}_sub_r2'] = r2
-            new_row[f'{TARGET_NAME_COLS[ind]}_sub_rmse'] = rmse
-            new_row[f'{TARGET_NAME_COLS[ind]}_sub_adjusted_r2'] = adjusted_r2
-            if TASK_PREDICTION_DICT[task] :
-                y_pred = best_model.predict(prediction_set_X_list[ind])
-                prediction_set_y_list[ind] = y_pred
-
-
-        out_statistic = pd.concat([out_statistic, new_row], ignore_index=True)
-        if TASK_PREDICTION_DICT[task]:
-            for iii in range(len(TARGET_NAME_COLS)):
-                prediction_set_y_list[iii] = pd.Series(prediction_set_y_list[iii], name=TARGET_NAME_COLS[iii])
-                origin.loc[origin[TARGET_NAME_COLS[iii]].isnull(), TARGET_NAME_COLS[iii]] = prediction_set_y_list[iii].astype(origin[TARGET_NAME_COLS[iii]].dtype)
-            origin.to_csv(os.path.join(pathprefix, 'out', f'{TASK_NAME_DICT[task]}_with_predictions.csv'), index=False)
-
 logger.info('Training finished.')
-out_statistic.to_csv(os.path.join(pathprefix,'out',out_filename), index=False)

@@ -1,0 +1,39 @@
+2024-12-31 17:18:28,836 - INFO - Started.
+2024-12-31 17:18:39,606 - INFO - Data loaded from /home/users/ntu/yang0886/scratch/Dec2024/1230.dta
+2024-12-31 17:19:17,149 - INFO - Data cleaning finished.
+2024-12-31 17:19:17,149 - INFO - Task 3 for xrd
+2024-12-31 17:19:17,628 - INFO - R2 score on test set: 0.33821077035489966
+2024-12-31 17:19:17,628 - INFO - RMSE on test set: 500.34058446385427
+2024-12-31 17:19:17,628 - INFO - Adjusted R2 score on test set: 0.336777550583064
+2024-12-31 17:19:17,645 - INFO - R2 score on sudden report subsamples test set: -878543981.9245703
+2024-12-31 17:19:17,645 - INFO - RMSE on sudden report subsamples test set: 4386455.169931861
+2024-12-31 17:19:17,645 - INFO - Adjusted R2 score on sudden report subsamples test set: 0.23388931543547498
+2024-12-31 17:19:17,645 - INFO - Task 3 for logxrd
+2024-12-31 17:19:17,999 - INFO - R2 score on test set: 0.23521017135860223
+2024-12-31 17:19:18,000 - INFO - RMSE on test set: 2.1713804900086844
+2024-12-31 17:19:18,000 - INFO - Adjusted R2 score on test set: 0.2330384369973879
+2024-12-31 17:19:18,001 - INFO - R2 score on sudden report subsamples test set: -30693321.15181624
+2024-12-31 17:19:18,001 - INFO - RMSE on sudden report subsamples test set: 13399.377572719975
+2024-12-31 17:19:18,001 - INFO - Adjusted R2 score on sudden report subsamples test set: 0.1487321695334265
+2024-12-31 17:19:18,001 - INFO - Task 3 for xrdat
+2024-12-31 17:19:18,453 - INFO - R2 score on test set: -0.002298543682312415
+2024-12-31 17:19:18,453 - INFO - RMSE on test set: 4.1557776767249806
+2024-12-31 17:19:18,453 - INFO - Adjusted R2 score on test set: -0.00463320326870309
+2024-12-31 17:19:18,454 - INFO - R2 score on sudden report subsamples test set: -947.4970611063972
+2024-12-31 17:19:18,454 - INFO - RMSE on sudden report subsamples test set: 313.3815467748941
+2024-12-31 17:19:18,454 - INFO - Adjusted R2 score on sudden report subsamples test set: -0.015087041847317906
+2024-12-31 17:19:18,454 - INFO - Task 3 for xrdppe
+2024-12-31 17:19:18,874 - INFO - R2 score on test set: 0.010494746792064302
+2024-12-31 17:19:18,874 - INFO - RMSE on test set: 102.98716304014157
+2024-12-31 17:19:18,874 - INFO - Adjusted R2 score on test set: 0.008033290938313176
+2024-12-31 17:19:18,875 - INFO - R2 score on sudden report subsamples test set: -653.9248970181151
+2024-12-31 17:19:18,876 - INFO - RMSE on sudden report subsamples test set: 16654.924075784962
+2024-12-31 17:19:18,876 - INFO - Adjusted R2 score on sudden report subsamples test set: -0.0011123529523104914
+2024-12-31 17:19:18,876 - INFO - Task 3 for xrdrank
+2024-12-31 17:19:19,349 - INFO - R2 score on test set: 0.13622521901609141
+2024-12-31 17:19:19,349 - INFO - RMSE on test set: 52240.741544032004
+2024-12-31 17:19:19,349 - INFO - Adjusted R2 score on test set: 0.13435456437400384
+2024-12-31 17:19:19,350 - INFO - R2 score on sudden report subsamples test set: -3524226.9469979927
+2024-12-31 17:19:19,350 - INFO - RMSE on sudden report subsamples test set: 71063490.47922961
+2024-12-31 17:19:19,350 - INFO - Adjusted R2 score on sudden report subsamples test set: 6.367718611566264e-05
+2024-12-31 17:19:19,350 - INFO - Training finished.
