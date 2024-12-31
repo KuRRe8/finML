@@ -86,7 +86,10 @@ logger.info('Started.')
 """
 Step 1: Data Cleaning
 """
-origin = pd.read_stata(origin_path)
+if origin_path.endswith('.csv'):
+    origin = pd.read_csv(origin_path,low_memory=False)
+elif origin_path.endswith('.dta'):
+    origin = pd.read_stata(origin_path)
 logger.info(f"Data loaded from {origin_path}")
 origin = origin.drop(columns=ALWAYS_DROP_LIST, errors='ignore')
 

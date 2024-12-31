@@ -70,7 +70,10 @@ logger.info('Started.')
 Step 1: Data Cleaning
 """
 
-origin = pd.read_csv(origin_path,low_memory=False)
+if origin_path.endswith('.csv'):
+    origin = pd.read_csv(origin_path,low_memory=False)
+elif origin_path.endswith('.dta'):
+    origin = pd.read_stata(origin_path)
 logger.info(f"Data loaded from {origin_path}")
 origin = origin.drop(columns=ALWAYS_DROP_LIST, errors='ignore')
 preserve_cols:pd.DataFrame = origin[PRESERVE_LIST]
@@ -100,7 +103,8 @@ origin['gvkey'] = s_gvkey
 
 # datetime641: datadate
 base_date = pd.Timestamp('1987-01-01')
-#origin['datadate'] = (pd.to_datetime(origin['datadate']) - base_date).dt.days
+if 'datadate' in origin.columns:
+    origin['datadate'] = (pd.to_datetime(origin['datadate']) - base_date).dt.days
 
 if _DEBUG_FALSE:
     origin.to_csv(os.path.join(pathprefix,'temp','s3converttype.csv'), index=False)
