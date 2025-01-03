@@ -75,6 +75,7 @@ pathprefix = os.path.dirname(os.path.abspath(__file__))
 origin_path = None
 with open(os.path.join(pathprefix,'..','datapath'), 'r') as f:
     origin_path = f.readline().strip()
+origin_filename = os.path.basename(origin_path).split('.')[0]
 
 
 logger = logging.getLogger()
@@ -300,9 +301,12 @@ for task in tasks:
         out_statistic = pd.concat([out_statistic, new_row], ignore_index=True)
         if TASK_PREDICTION_DICT[task]:
             for iii in range(len(TARGET_NAME_COLS)):
-                prediction_set_y_list[iii] = pd.Series(prediction_set_y_list[iii], name=TARGET_NAME_COLS[iii])
-                origin.loc[origin[TARGET_NAME_COLS[iii]].isnull(), TARGET_NAME_COLS[iii]] = prediction_set_y_list[iii].astype(origin[TARGET_NAME_COLS[iii]].dtype)
-            origin.to_csv(os.path.join(pathprefix, 'out', f'{TASK_NAME_DICT[task]}_with_predictions.csv'), index=False)
+                __df = pd.Series(prediction_set_y_list[iii], name=TARGET_NAME_COLS[iii])
+                null_indices = origin[origin[TARGET_NAME_COLS[iii]].isnull()].index
+                if len(null_indices) != len(__df):
+                    raise ValueError(f"Length mismatch: {len(null_indices)} null values in origin but {len(__df)} values in __df for {TARGET_NAME_COLS[iii]}")
+                origin.loc[null_indices, TARGET_NAME_COLS[iii]] = __df.values
+            origin.to_csv(os.path.join(pathprefix, 'out', f'{TASK_NAME_DICT[task]}_{origin_filename}.csv'), index=False)
     elif task == 2: #ridge
         for ind in range(len(TARGET_NAME_COLS)):
             logger.info(f"Task {task} for {TARGET_NAME_COLS[ind]}")
@@ -368,9 +372,12 @@ for task in tasks:
         out_statistic = pd.concat([out_statistic, new_row], ignore_index=True)
         if TASK_PREDICTION_DICT[task]:
             for iii in range(len(TARGET_NAME_COLS)):
-                prediction_set_y_list[iii] = pd.Series(prediction_set_y_list[iii], name=TARGET_NAME_COLS[iii])
-                origin.loc[origin[TARGET_NAME_COLS[iii]].isnull(), TARGET_NAME_COLS[iii]] = prediction_set_y_list[iii].astype(origin[TARGET_NAME_COLS[iii]].dtype)
-            origin.to_csv(os.path.join(pathprefix, 'out', f'{TASK_NAME_DICT[task]}_with_predictions.csv'), index=False)    
+                __df = pd.Series(prediction_set_y_list[iii], name=TARGET_NAME_COLS[iii])
+                null_indices = origin[origin[TARGET_NAME_COLS[iii]].isnull()].index
+                if len(null_indices) != len(__df):
+                    raise ValueError(f"Length mismatch: {len(null_indices)} null values in origin but {len(__df)} values in __df for {TARGET_NAME_COLS[iii]}")
+                origin.loc[null_indices, TARGET_NAME_COLS[iii]] = __df.values
+            origin.to_csv(os.path.join(pathprefix, 'out', f'{TASK_NAME_DICT[task]}_{origin_filename}.csv'), index=False)
     elif task == 3: #OLS
         for ind in range(len(TARGET_NAME_COLS)):
             logger.info(f"Task {task} for {TARGET_NAME_COLS[ind]}")
@@ -421,9 +428,12 @@ for task in tasks:
         out_statistic = pd.concat([out_statistic, new_row], ignore_index=True)
         if TASK_PREDICTION_DICT[task]:
             for iii in range(len(TARGET_NAME_COLS)):
-                prediction_set_y_list[iii] = pd.Series(prediction_set_y_list[iii], name=TARGET_NAME_COLS[iii])
-                origin.loc[origin[TARGET_NAME_COLS[iii]].isnull(), TARGET_NAME_COLS[iii]] = prediction_set_y_list[iii].astype(origin[TARGET_NAME_COLS[iii]].dtype)
-            origin.to_csv(os.path.join(pathprefix, 'out', f'{TASK_NAME_DICT[task]}_with_predictions.csv'), index=False)
+                __df = pd.Series(prediction_set_y_list[iii], name=TARGET_NAME_COLS[iii])
+                null_indices = origin[origin[TARGET_NAME_COLS[iii]].isnull()].index
+                if len(null_indices) != len(__df):
+                    raise ValueError(f"Length mismatch: {len(null_indices)} null values in origin but {len(__df)} values in __df for {TARGET_NAME_COLS[iii]}")
+                origin.loc[null_indices, TARGET_NAME_COLS[iii]] = __df.values
+            origin.to_csv(os.path.join(pathprefix, 'out', f'{TASK_NAME_DICT[task]}_{origin_filename}.csv'), index=False)
     elif task == 4: #MLP
         for ind in range(len(TARGET_NAME_COLS)):
             logger.info(f"Task {task} for {TARGET_NAME_COLS[ind]}")
@@ -495,9 +505,12 @@ for task in tasks:
         out_statistic = pd.concat([out_statistic, new_row], ignore_index=True)
         if TASK_PREDICTION_DICT[task]:
             for iii in range(len(TARGET_NAME_COLS)):
-                prediction_set_y_list[iii] = pd.Series(prediction_set_y_list[iii], name=TARGET_NAME_COLS[iii])
-                origin.loc[origin[TARGET_NAME_COLS[iii]].isnull(), TARGET_NAME_COLS[iii]] = prediction_set_y_list[iii].astype(origin[TARGET_NAME_COLS[iii]].dtype)
-            origin.to_csv(os.path.join(pathprefix, 'out', f'{TASK_NAME_DICT[task]}_with_predictions.csv'), index=False)    
+                __df = pd.Series(prediction_set_y_list[iii], name=TARGET_NAME_COLS[iii])
+                null_indices = origin[origin[TARGET_NAME_COLS[iii]].isnull()].index
+                if len(null_indices) != len(__df):
+                    raise ValueError(f"Length mismatch: {len(null_indices)} null values in origin but {len(__df)} values in __df for {TARGET_NAME_COLS[iii]}")
+                origin.loc[null_indices, TARGET_NAME_COLS[iii]] = __df.values
+            origin.to_csv(os.path.join(pathprefix, 'out', f'{TASK_NAME_DICT[task]}_{origin_filename}.csv'), index=False)
     elif task == 5: #RF
         for ind in range(len(TARGET_NAME_COLS)):
             logger.info(f"Task {task} for {TARGET_NAME_COLS[ind]}")
@@ -566,9 +579,12 @@ for task in tasks:
         out_statistic = pd.concat([out_statistic, new_row], ignore_index=True)
         if TASK_PREDICTION_DICT[task]:
             for iii in range(len(TARGET_NAME_COLS)):
-                prediction_set_y_list[iii] = pd.Series(prediction_set_y_list[iii], name=TARGET_NAME_COLS[iii])
-                origin.loc[origin[TARGET_NAME_COLS[iii]].isnull(), TARGET_NAME_COLS[iii]] = prediction_set_y_list[iii].astype(origin[TARGET_NAME_COLS[iii]].dtype)
-            origin.to_csv(os.path.join(pathprefix, 'out', f'{TASK_NAME_DICT[task]}_with_predictions.csv'), index=False)    
+                __df = pd.Series(prediction_set_y_list[iii], name=TARGET_NAME_COLS[iii])
+                null_indices = origin[origin[TARGET_NAME_COLS[iii]].isnull()].index
+                if len(null_indices) != len(__df):
+                    raise ValueError(f"Length mismatch: {len(null_indices)} null values in origin but {len(__df)} values in __df for {TARGET_NAME_COLS[iii]}")
+                origin.loc[null_indices, TARGET_NAME_COLS[iii]] = __df.values
+            origin.to_csv(os.path.join(pathprefix, 'out', f'{TASK_NAME_DICT[task]}_{origin_filename}.csv'), index=False)
     elif task == 6: #XGB
         for ind in range(len(TARGET_NAME_COLS)):
             logger.info(f"Task {task} for {TARGET_NAME_COLS[ind]}")
@@ -643,9 +659,12 @@ for task in tasks:
         out_statistic = pd.concat([out_statistic, new_row], ignore_index=True)
         if TASK_PREDICTION_DICT[task]:
             for iii in range(len(TARGET_NAME_COLS)):
-                prediction_set_y_list[iii] = pd.Series(prediction_set_y_list[iii], name=TARGET_NAME_COLS[iii])
-                origin.loc[origin[TARGET_NAME_COLS[iii]].isnull(), TARGET_NAME_COLS[iii]] = prediction_set_y_list[iii].astype(origin[TARGET_NAME_COLS[iii]].dtype)
-            origin.to_csv(os.path.join(pathprefix, 'out', f'{TASK_NAME_DICT[task]}_with_predictions.csv'), index=False)
+                __df = pd.Series(prediction_set_y_list[iii], name=TARGET_NAME_COLS[iii])
+                null_indices = origin[origin[TARGET_NAME_COLS[iii]].isnull()].index
+                if len(null_indices) != len(__df):
+                    raise ValueError(f"Length mismatch: {len(null_indices)} null values in origin but {len(__df)} values in __df for {TARGET_NAME_COLS[iii]}")
+                origin.loc[null_indices, TARGET_NAME_COLS[iii]] = __df.values
+            origin.to_csv(os.path.join(pathprefix, 'out', f'{TASK_NAME_DICT[task]}_{origin_filename}.csv'), index=False)
 
 logger.info('Training finished.')
 out_statistic.to_csv(os.path.join(pathprefix,'out',out_filename), index=False)
