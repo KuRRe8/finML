@@ -1,0 +1,49 @@
+2025-01-03 15:11:20,598 - INFO - Started.
+2025-01-03 15:11:21,069 - INFO - Data loaded from /home/users/ntu/yang0886/scratch/Jan2025/CPfactors2_rescaled_20250103.csv
+2025-01-03 15:11:38,763 - INFO - Data cleaning finished.
+2025-01-03 15:11:38,764 - INFO - Task 6 for xrd
+2025-01-03 15:18:22,169 - INFO - Best params: {'estimator__learning_rate': 0.3, 'estimator__max_depth': 11, 'estimator__n_estimators': 170, 'estimator__subsample': 1, 'imputer__strategy': 'mean'}
+2025-01-03 15:18:22,169 - INFO - Best cross-validated R2: 0.9077181161139353
+2025-01-03 15:18:22,195 - INFO - R2 score on test set: 0.37754749958796907
+2025-01-03 15:18:22,195 - INFO - RMSE on test set: 1116.2847514833895
+2025-01-03 15:18:22,195 - INFO - Adjusted R2 score on test set: 0.37705922495633115
+2025-01-03 15:18:22,204 - INFO - R2 score on sudden report subsamples test set: -0.6456746131342961
+2025-01-03 15:18:22,204 - INFO - RMSE on sudden report subsamples test set: 301.32718706257066
+2025-01-03 15:18:22,204 - INFO - Adjusted R2 score on sudden report subsamples test set: 0.3702348527316247
+2025-01-03 15:18:22,234 - INFO - Task 6 for logxrd
+2025-01-03 15:27:13,829 - INFO - Best params: {'estimator__learning_rate': 0.3, 'estimator__max_depth': 11, 'estimator__n_estimators': 170, 'estimator__subsample': 1, 'imputer__strategy': 'mean'}
+2025-01-03 15:27:13,829 - INFO - Best cross-validated R2: 0.8570567146992135
+2025-01-03 15:27:13,844 - INFO - R2 score on test set: 0.8131827976394814
+2025-01-03 15:27:13,844 - INFO - RMSE on test set: 1.0798204614447224
+2025-01-03 15:27:13,844 - INFO - Adjusted R2 score on test set: 0.8130116569264358
+2025-01-03 15:27:13,853 - INFO - R2 score on sudden report subsamples test set: 0.707993326495794
+2025-01-03 15:27:13,853 - INFO - RMSE on sudden report subsamples test set: 1.204477474037702
+2025-01-03 15:27:13,853 - INFO - Adjusted R2 score on sudden report subsamples test set: 0.8110265510748402
+2025-01-03 15:27:13,884 - INFO - Task 6 for xrdat
+2025-01-03 15:32:41,404 - INFO - Best params: {'estimator__learning_rate': 0.01, 'estimator__max_depth': 3, 'estimator__n_estimators': 50, 'estimator__subsample': 0.5, 'imputer__strategy': 'mean'}
+2025-01-03 15:32:41,405 - INFO - Best cross-validated R2: -0.19074784178898882
+2025-01-03 15:32:41,416 - INFO - R2 score on test set: 0.03701610989026516
+2025-01-03 15:32:41,416 - INFO - RMSE on test set: 60.87211229268801
+2025-01-03 15:32:41,416 - INFO - Adjusted R2 score on test set: 0.03626070991371222
+2025-01-03 15:32:41,420 - INFO - R2 score on sudden report subsamples test set: 0.523899105520371
+2025-01-03 15:32:41,420 - INFO - RMSE on sudden report subsamples test set: 4.7095993429343554
+2025-01-03 15:32:41,420 - INFO - Adjusted R2 score on sudden report subsamples test set: 0.025702859301569903
+2025-01-03 15:32:41,450 - INFO - Task 6 for xrdppe
+2025-01-03 15:38:15,765 - INFO - Best params: {'estimator__learning_rate': 0.01, 'estimator__max_depth': 3, 'estimator__n_estimators': 170, 'estimator__subsample': 1, 'imputer__strategy': 'mean'}
+2025-01-03 15:38:15,766 - INFO - Best cross-validated R2: 0.13954915688821376
+2025-01-03 15:38:15,777 - INFO - R2 score on test set: 0.03977861862027465
+2025-01-03 15:38:15,777 - INFO - RMSE on test set: 157.60279913668202
+2025-01-03 15:38:15,777 - INFO - Adjusted R2 score on test set: 0.03901430588038379
+2025-01-03 15:38:15,782 - INFO - R2 score on sudden report subsamples test set: 0.0465379487504598
+2025-01-03 15:38:15,782 - INFO - RMSE on sudden report subsamples test set: 181.30022022526276
+2025-01-03 15:38:15,782 - INFO - Adjusted R2 score on sudden report subsamples test set: 0.02882219026130939
+2025-01-03 15:38:15,807 - INFO - Task 6 for xrdrank
+2025-01-03 15:47:12,672 - INFO - Best params: {'estimator__learning_rate': 0.3, 'estimator__max_depth': 11, 'estimator__n_estimators': 170, 'estimator__subsample': 1, 'imputer__strategy': 'mean'}
+2025-01-03 15:47:12,672 - INFO - Best cross-validated R2: 0.7843398930765899
+2025-01-03 15:47:12,688 - INFO - R2 score on test set: 0.6537262360601815
+2025-01-03 15:47:12,689 - INFO - RMSE on test set: 30914.464866151102
+2025-01-03 15:47:12,689 - INFO - Adjusted R2 score on test set: 0.6534546061857387
+2025-01-03 15:47:12,699 - INFO - R2 score on sudden report subsamples test set: 0.5657089257928978
+2025-01-03 15:47:12,699 - INFO - RMSE on sudden report subsamples test set: 24881.50326786227
+2025-01-03 15:47:12,699 - INFO - Adjusted R2 score on sudden report subsamples test set: 0.6496581702244224
+2025-01-03 15:47:16,561 - INFO - Training finished.

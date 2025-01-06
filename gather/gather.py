@@ -175,6 +175,10 @@ y_test = []
 prediction_set_X_list = [] # considering 5 target columns, each task use identical prediction set
 prediction_set_y_list = [] # considering 5 target columns
 
+#s_gvkey = s_gvkey
+full_X = origin.drop('gvkey', axis=1, errors='ignore').drop(columns=TARGET_NAME_COLS).copy()
+y_pred_full_list = [] # contains 5 y_pred_full
+
 for ind in range(len(TARGET_NAME_COLS)):
     print(f'Processing {TARGET_NAME_COLS[ind]}')
     prediction_set_Xy = origin[origin[TARGET_NAME_COLS[ind]].isnull()].copy().drop('gvkey', axis=1, errors='ignore')
@@ -233,6 +237,7 @@ for task in tasks:
     new_row['all_tasks'] = str(tasks)
     
     new_row = pd.DataFrame([new_row], columns=out_statistic_cols)
+    y_pred_full_list = []
     if task == 1: #lasso
         for ind in range(len(TARGET_NAME_COLS)):
             logger.info(f"Task {task} for {TARGET_NAME_COLS[ind]}")
@@ -651,9 +656,13 @@ for task in tasks:
             new_row[f'{TARGET_NAME_COLS[ind]}_sub_r2'] = r2
             new_row[f'{TARGET_NAME_COLS[ind]}_sub_rmse'] = rmse
             new_row[f'{TARGET_NAME_COLS[ind]}_sub_adjusted_r2'] = adjusted_r2
+
             if TASK_PREDICTION_DICT[task] :
                 y_pred = best_model.predict(prediction_set_X_list[ind])
                 prediction_set_y_list[ind] = y_pred
+
+                y_pred_full = best_model.predict(full_X) # 1 column many rows
+                y_pred_full_list.append(y_pred_full)
 
 
         out_statistic = pd.concat([out_statistic, new_row], ignore_index=True)
@@ -663,7 +672,15 @@ for task in tasks:
                 null_indices = origin[origin[TARGET_NAME_COLS[iii]].isnull()].index
                 if len(null_indices) != len(__df):
                     raise ValueError(f"Length mismatch: {len(null_indices)} null values in origin but {len(__df)} values in __df for {TARGET_NAME_COLS[iii]}")
-                origin.loc[null_indices, TARGET_NAME_COLS[iii]] = __df.values
+                #origin.loc[null_indices, TARGET_NAME_COLS[iii]] = __df.values
+
+                __df_full = pd.Series(y_pred_full_list[iii], name=(TARGET_NAME_COLS[iii]+"_predicted"))
+                all_indices = origin.index
+                if len(all_indices) != len(__df_full):
+                    raise ValueError(f"Length mismatch: {len(all_indices)} values in origin but {len(__df_full)} values in __df for {TARGET_NAME_COLS[iii]}")
+                origin = pd.concat([origin, __df_full], axis=1)
+
+
             origin.to_csv(os.path.join(pathprefix, 'out', f'{TASK_NAME_DICT[task]}_{origin_filename}.csv'), index=False)
 
 logger.info('Training finished.')
